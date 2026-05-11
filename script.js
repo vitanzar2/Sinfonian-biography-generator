@@ -31,13 +31,13 @@ function buildSheetText() {
 
   const name = cleanSentence(d.fullName, "This Sinfonian");
   const schoolClause = d.school ? ` at ${d.school}` : "";
-  const chapterClause = d.chapter ? ` and is a brother of ${d.chapter}` : "";
+  const chapterClause = d.chapter ? ` with ${d.chapter}` : "";
 
-  const introParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "his hometown")}, currently pursuing a ${cleanSentence(d.major, "music")} degree${schoolClause}. He is expected to graduate in ${cleanSentence(d.graduationYear, "the coming year")}, where his studies blend rigorous musical training with a strong commitment to artistic growth, collaboration, and service through performance. On campus, he is known for supporting peers in rehearsals, representing his studio with professionalism, and contributing to a culture of excellence within both classroom and ensemble settings.`;
+  const introParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "their hometown")}${schoolClause}. They are focused on ${cleanSentence(d.major, "music")}${d.graduationYear ? ` and anticipate completing this work in ${d.graduationYear}` : ""}. Their path reflects artistic growth, collaboration, and service through performance, while supporting peers and contributing to a strong culture of excellence.`;
 
   const leadershipParagraph = d.offices
-    ? `${name} serves as ${d.offices}${chapterClause ? ` of ${d.chapter}` : " within Phi Mu Alpha Sinfonia"}, where he provides leadership and guidance to collegiate membership. In this role, he helps coordinate chapter initiatives, mentors younger brothers, and supports programs that promote musicianship, scholarship, and community engagement. He works to strengthen brotherhood, encourage professional and musical excellence, and support the fraternity's mission of advancing music in America through service and fellowship.`
-    : `${name} is active within Phi Mu Alpha Sinfonia, where he supports collegiate membership through leadership, brotherhood, and service. He works to encourage professional and musical excellence while advancing the fraternity's mission of music in America.`;
+    ? `${name} contributes through ${d.offices}${chapterClause}, helping organize initiatives, mentor fellow members, and support programs that promote musicianship, scholarship, and community engagement.`
+    : `${name} is active in collaborative and service-focused efforts, supporting others through leadership, musicianship, and community engagement.`;
 
   const fraternityParagraph = `Phi Mu Alpha Sinfonia Fraternity of America is the nation's oldest and largest secret national fraternal society in music. Founded on October 6, 1898, at the New England Conservatory of Music in Boston, Massachusetts, the fraternity was established to unite men through a shared commitment to music, brotherhood, scholarship, and service.`;
 
@@ -46,7 +46,7 @@ function buildSheetText() {
     : `The objectives of Phi Mu Alpha Sinfonia are to develop the best and truest fraternal spirit; foster the mutual welfare and brotherhood of musical students; advance music in America; and encourage loyalty to the alma mater. Through collegiate chapters, alumni associations, and national programs, Sinfonians continue to uphold these ideals by serving their campuses, communities, and the broader musical profession.`;
 
   const paragraphs = [introParagraph, leadershipParagraph, fraternityParagraph, closingParagraph];
-  const body = paragraphs.join("\n\n\n");
+  const body = paragraphs.join("\n\n");
 
   return body;
 }
