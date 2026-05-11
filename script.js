@@ -13,17 +13,24 @@ const fields = {
 };
 
 const photoInput = document.getElementById("profilePhoto");
+const photoPreview = document.getElementById("photoPreview");
 const bioOutput = document.getElementById("bioOutput");
 const previewName = document.getElementById("previewName");
 const previewEvent = document.getElementById("previewEvent");
 const statusMessage = document.getElementById("statusMessage");
+
+const fraternityIntro = [
+  "Phi Mu Alpha Sinfonia is America's oldest secret national fraternal society in music.",
+  "The Fraternity builds men of integrity through brotherhood, service, and leadership, while advancing music in America.",
+  "Sinfonians support their campuses and communities by creating meaningful musical experiences and encouraging excellence in all members."
+].join(" ");
 
 function buildSheetText() {
   const d = Object.fromEntries(
     Object.entries(fields).map(([key, element]) => [key, element.value.trim()])
   );
 
-  const sheet = [
+  const details = [
     `Chapter: ${d.chapter}`,
     `School: ${d.school}`,
     `Hometown: ${d.hometown}`,
@@ -31,20 +38,36 @@ function buildSheetText() {
     `Voice / Instrument: ${d.voiceOrInstrument}`,
     `Graduation Year: ${d.graduationYear}`,
     `Offices / Roles: ${d.offices}`,
-    `Achievements: ${d.achievements}`,
-    `Additional Notes: ${d.bioNotes}`
+    `Achievements: ${d.achievements || "N/A"}`,
+    `Additional Notes: ${d.bioNotes || "N/A"}`
   ].join("\n");
 
-  bioOutput.textContent = sheet;
+  bioOutput.textContent = `${fraternityIntro}\n\n${details}`;
   previewName.textContent = d.fullName;
   previewEvent.textContent = d.eventName;
 
-  return sheet;
+  return `${fraternityIntro}\n\n${details}`;
+}
+
+function updatePhotoPreview() {
+  const file = photoInput.files?.[0];
+  if (!file) {
+    photoPreview.removeAttribute("src");
+    photoPreview.classList.add("hidden");
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+  photoPreview.src = url;
+  photoPreview.classList.remove("hidden");
+  photoPreview.onload = () => URL.revokeObjectURL(url);
 }
 
 Object.values(fields).forEach((field) => {
   field.addEventListener("input", buildSheetText);
 });
+
+photoInput.addEventListener("change", updatePhotoPreview);
 
 buildSheetText();
 
@@ -68,13 +91,13 @@ async function embedPhoto(pdfDoc, page) {
     h: 160
   };
 
-  const imgScale = Math.max(frame.w / image.width, frame.h / image.height);
+  const imgScale = Math.min(frame.w / image.width, frame.h / image.height);
   const drawW = image.width * imgScale;
   const drawH = image.height * imgScale;
 
   page.drawImage(image, {
-    x: frame.x - (drawW - frame.w) / 2,
-    y: frame.y - (drawH - frame.h) / 2,
+    x: frame.x + (frame.w - drawW) / 2,
+    y: frame.y + (frame.h - drawH) / 2,
     width: drawW,
     height: drawH
   });

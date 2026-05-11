@@ -68,3 +68,23 @@ button { border: none; padding: 0.9rem 1.2rem; border-radius: 0.75rem; cursor: p
 }
 
 @media (max-width: 900px) { .app-shell { grid-template-columns: 1fr; } }
+
+.preview-photo-frame {
+  width: 180px;
+  height: 220px;
+  border: 2px solid var(--sinfonia-red);
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+#photoPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hidden {
+  display: none;
+}
