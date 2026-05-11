@@ -7,7 +7,6 @@ const fields = {
   voiceOrInstrument: document.getElementById("voiceOrInstrument"),
   graduationYear: document.getElementById("graduationYear"),
   offices: document.getElementById("offices"),
-  achievements: document.getElementById("achievements"),
   bioNotes: document.getElementById("bioNotes")
 };
 
@@ -32,8 +31,18 @@ function buildSheetText() {
   const name = cleanSentence(d.fullName, "This Sinfonian");
   const schoolClause = d.school ? ` at ${d.school}` : "";
   const chapterClause = d.chapter ? ` with ${d.chapter}` : "";
+  const currentYear = new Date().getFullYear();
+  const parsedYear = Number.parseInt(d.graduationYear, 10);
+  const hasValidGraduationYear = Number.isInteger(parsedYear);
+  const graduationClause = hasValidGraduationYear
+    ? parsedYear < currentYear
+      ? ` and had graduated in ${parsedYear}`
+      : ` and anticipate completing this work in ${parsedYear}`
+    : d.graduationYear
+      ? ` and anticipate completing this work in ${d.graduationYear}`
+      : "";
 
-  const introParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "their hometown")}${schoolClause}. They are focused on ${cleanSentence(d.major, "music")}${d.graduationYear ? ` and anticipate completing this work in ${d.graduationYear}` : ""}. Their path reflects artistic growth, collaboration, and service through performance, while supporting peers and contributing to a strong culture of excellence.`;
+  const introParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "their hometown")}${schoolClause}. They are focused on ${cleanSentence(d.major, "music")}${graduationClause}. Their path reflects artistic growth, collaboration, and service through performance, while supporting peers and contributing to a strong culture of excellence.`;
 
   const leadershipParagraph = d.offices
     ? `${name} contributes through ${d.offices}${chapterClause}, helping organize initiatives, mentor fellow members, and support programs that promote musicianship, scholarship, and community engagement.`
