@@ -1,244 +1,117 @@
-const fields = {
-  fullName: document.getElementById("fullName"),
-  chapter: document.getElementById("chapter"),
-  school: document.getElementById("school"),
-  hometown: document.getElementById("hometown"),
-  major: document.getElementById("major"),
-  voiceOrInstrument: document.getElementById("voiceOrInstrument"),
-  graduationYear: document.getElementById("graduationYear"),
-  hasGraduated: document.getElementById("hasGraduated"),
-  musicalInvolvement: document.getElementById("musicalInvolvement"),
-  leadershipAccomplishments: document.getElementById("leadershipAccomplishments"),
-  whyJoined: document.getElementById("whyJoined"),
-  careerGoals: document.getElementById("careerGoals"),
-  serviceEngagement: document.getElementById("serviceEngagement"),
-  bioNotes: document.getElementById("bioNotes")
-};
-
-const POSITION_DESCRIPTIONS = {
-  president: "provides leadership for chapter operations and strategic planning",
-  vicePresident: "assists in chapter administration and member development",
-  fraternityEducationOfficer: "supports the development and education of new members",
-  treasurer: "oversees chapter finances and budgeting",
-  secretary: "maintains chapter records, communications, and organizational continuity"
-};
-
-const POSITION_LABELS = {
-  president: "President",
-  vicePresident: "Vice President",
-  fraternityEducationOfficer: "Fraternity Education Officer",
-  treasurer: "Treasurer",
-  secretary: "Secretary"
-};
-
-const PHOTO_FRAME = { x: 445, y: 600, w: 120, h: 158 };
-
-const photoInput = document.getElementById("profilePhoto");
+const ids = ["fullName","pronouns","personType","styleMode","lengthMode","outputMode","chapter","school","hometown","majors","minors","graduationYear","hasGraduated","instrument","genreFocus","conductingExperience","compositionExperience","ensembles","communityPerformance","serviceEngagement","mentorship","leadershipPosition","leadershipAccomplishments","achievements","militaryChurchCommunity","whyJoined","careerGoals","values","motto","sectionOrder"];
+const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
 const statusMessage = document.getElementById("statusMessage");
-const pdfPreview = document.querySelector(".pdf-preview");
-const positionOptions = [...document.querySelectorAll("#positionSelections input[name='leadershipPosition']")];
+const preview = document.getElementById("livePreview");
+const photoInput = document.getElementById("profilePhoto");
 
-let previewPdfUrl;
+const ROLE_DESCRIPTIONS = {
+  president: "guides chapter strategy and strengthens culture through decisive, service-centered leadership",
+  vicePresident: "supports chapter operations and drives member development initiatives",
+  fraternityEducationOfficer: "designs meaningful educational pathways for new and active brothers",
+  treasurer: "safeguards chapter resources through responsible budgeting and financial stewardship",
+  secretary: "maintains records and communication systems that preserve chapter continuity",
+  warden: "upholds chapter standards, ritual integrity, and event readiness"
+};
 
-function cleanSentence(text, fallback = "") {
-  const value = text.trim();
-  return value ? value : fallback;
+const PRONOUNS = {
+  he: { subj: "he", obj: "him", poss: "his" },
+  she: { subj: "she", obj: "her", poss: "her" },
+  they: { subj: "they", obj: "them", poss: "their" },
+  name: null
+};
+
+const clean = (s) => (s || "").replace(/\s+/g, " ").trim();
+const titleCase = (s) => clean(s).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+const dedupeWords = (text) => text.replace(/\b(\w+)\s+\1\b/gi, "$1");
+
+function pWord(name, key) {
+  const mode = fields.pronouns.value;
+  if (mode === "name") return name;
+  return PRONOUNS[mode][key];
 }
 
-function buildGraduationClause(graduationYear, hasGraduated) {
-  if (hasGraduated === "yes") {
-    return graduationYear
-      ? ` and has successfully completed their degree in ${graduationYear}`
-      : " and has successfully completed their degree in their field";
-  }
-
-  if (!graduationYear) {
-    return "";
-  }
-
-  return ` and anticipates completing this work in ${graduationYear}`;
+function sentenceVariants(style) {
+  if (style === "ceremonial") return ["With distinction,", "In faithful pursuit of harmony,", "With steadfast purpose,"];
+  if (style === "recruitment") return ["Notably,", "Prospective members appreciate that", "A standout quality is that"];
+  if (style === "formal") return ["Additionally,", "Furthermore,", "In addition,"];
+  return ["Additionally,", "Beyond this,", "Notably,"];
 }
 
-function buildLeadershipRoleSentence(name, chapter) {
-  const selectedPosition = positionOptions.find((option) => option.checked)?.value;
+function buildBio() {
+  const d = Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, clean(v.value)]));
+  const name = titleCase(d.fullName || "This Sinfonian");
+  const variants = sentenceVariants(d.styleMode);
+  const grad = d.hasGraduated === "yes" ? `completed studies in ${d.graduationYear || "their program"}` : `plans to graduate in ${d.graduationYear || "a future term"}`;
+  const majorMinor = [d.majors && `majoring in ${d.majors}`, d.minors && `with minors in ${d.minors}`].filter(Boolean).join(" ");
 
-  if (!selectedPosition) {
-    return `${name} is active in collaborative and service-focused efforts, supporting others through leadership, musicianship, and community engagement.`;
-  }
+  const sections = {
+    intro: `${name} is a ${d.personType} musician from ${d.hometown || "their hometown"} ${d.school ? `affiliated with ${d.school}` : ""}. ${pWord(name,"subj")} ${grad} ${majorMinor}.`,
+    musical: `${variants[0]} ${name} focuses on ${d.genreFocus || "a broad musical practice"} with primary emphasis on ${d.instrument || "their principal instrument"}. Ensemble and performance participation includes ${d.ensembles || "collaborative campus and community performances"}. ${d.conductingExperience ? `${name} has conducting experience in ${d.conductingExperience}.` : ""} ${d.compositionExperience ? `${name} contributes through composition/arranging in ${d.compositionExperience}.` : ""} ${d.militaryChurchCommunity ? `Additional participation includes ${d.militaryChurchCommunity}.` : ""}`,
+    leadership: `${variants[1]} ${d.leadershipPosition ? `${name} serves as ${d.leadershipPosition.replace(/([A-Z])/g, " $1")}, and ${pWord(name,"subj")} ${ROLE_DESCRIPTIONS[d.leadershipPosition]}.` : `${name} contributes through collaborative chapter leadership.`} ${d.leadershipAccomplishments ? `Leadership accomplishments include ${d.leadershipAccomplishments}.` : ""} ${d.mentorship ? `${pWord(name,"subj").charAt(0).toUpperCase() + pWord(name,"subj").slice(1)} also mentors and teaches through ${d.mentorship}.` : ""}`,
+    service: `${variants[2]} service and community engagement includes ${d.serviceEngagement || "ongoing volunteer and chapter-supported initiatives"}. ${d.communityPerformance ? `Outreach performance work includes ${d.communityPerformance}.` : ""}`,
+    honors: `${d.achievements ? `${name} has earned recognition including ${d.achievements}.` : `${name} continues building an achievements profile through scholarship, artistry, and service.`}`,
+    values: `${d.whyJoined ? `${name} joined Sinfonia because ${d.whyJoined}.` : ""} ${d.values ? `Guiding values include ${d.values}.` : ""} ${d.motto ? `Personal motto: “${d.motto}.”` : ""}`,
+    fraternity: buildFraternityParagraph(d),
+    future: `${d.careerGoals ? `Future aspirations include ${d.careerGoals}.` : `${name} is committed to lifelong growth and meaningful impact in music and leadership.`}`,
+    closing: d.outputMode === "nomination" ? `${name} is respectfully recommended for award consideration based on sustained excellence and exemplary character.` : `${name}'s biography reflects artistry, brotherhood, scholarship, and service in action.`
+  };
 
-  const chapterClause = chapter ? ` within ${chapter}` : "";
-  const roleLabel = POSITION_LABELS[selectedPosition];
-  const roleDetail = POSITION_DESCRIPTIONS[selectedPosition];
-
-  return `${name} serves as ${roleLabel}${chapterClause}. In this role, ${name} ${roleDetail}.`;
+  const order = (d.sectionOrder || "intro,musical,leadership,service,honors,values,fraternity,future,closing").split(",").map(s => clean(s));
+  let picked = order.map(k => sections[k]).filter(Boolean);
+  if (d.lengthMode === "short") picked = picked.slice(0, 4);
+  if (d.lengthMode === "long") picked = picked;
+  if (d.outputMode === "social") return dedupeWords(`${name} | ${d.instrument || "Musician"}. ${d.school || ""} ${d.achievements || ""} ${d.careerGoals || ""}`);
+  return dedupeWords(picked.join("\n\n")).replace(/\s+\./g, ".");
 }
 
-function buildSheetText() {
-  const d = Object.fromEntries(
-    Object.entries(fields).map(([key, element]) => [key, element.value.trim()])
-  );
-
-  const name = cleanSentence(d.fullName, "This Sinfonian");
-  const schoolClause = d.school ? ` at ${d.school}` : "";
-  const graduationClause = buildGraduationClause(d.graduationYear, d.hasGraduated);
-
-  const personalAcademicParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "their hometown")}${schoolClause}. They are focused on ${cleanSentence(d.major, "music")}${graduationClause}.`;
-
-  const musicalInvolvementParagraph = d.musicalInvolvement
-    ? `${name}'s musical involvement includes ${d.musicalInvolvement}.`
-    : `${name} has actively contributed to musical ensembles and collaborative performance opportunities that support artistic excellence.`;
-
-  const fraternityLeadershipParagraph = d.leadershipAccomplishments
-    ? `${buildLeadershipRoleSentence(name, d.chapter)} ${name}'s leadership accomplishments include ${d.leadershipAccomplishments}.`
-    : buildLeadershipRoleSentence(name, d.chapter);
-
-  const personalValuesGoalsParagraph = `${d.whyJoined ? `${name} joined Phi Mu Alpha Sinfonia because ${d.whyJoined}.` : `${name} joined Phi Mu Alpha Sinfonia to strengthen brotherhood through a shared commitment to music, scholarship, and service.`} ${d.careerGoals ? `${name}'s career goals include ${d.careerGoals}.` : `${name} is dedicated to lifelong artistic growth and meaningful professional impact.`} ${d.serviceEngagement ? `Their service and community engagement includes ${d.serviceEngagement}.` : `They remain committed to service and community engagement through campus and local initiatives.`}`;
-
-  const fraternityParagraph = "Phi Mu Alpha Sinfonia Fraternity of America is the nation's oldest and largest secret national fraternal society in music. Founded on October 6, 1898, at the New England Conservatory of Music in Boston, Massachusetts, the fraternity was established to unite men through a shared commitment to music, brotherhood, scholarship, and service.";
-
-  const closingParagraph = d.bioNotes
-    ? d.bioNotes
-    : "The objectives of Phi Mu Alpha Sinfonia are to develop the best and truest fraternal spirit; foster the mutual welfare and brotherhood of musical students; advance music in America; and encourage loyalty to the alma mater. Through collegiate chapters, alumni associations, and national programs, Sinfonians continue to uphold these ideals by serving their campuses, communities, and the broader musical profession.";
-
-  return [
-    personalAcademicParagraph,
-    musicalInvolvementParagraph,
-    fraternityLeadershipParagraph,
-    personalValuesGoalsParagraph,
-    fraternityParagraph,
-    closingParagraph
-  ].join("\n\n");
+function buildFraternityParagraph(d) {
+  const versions = [];
+  if (document.getElementById("frShort").checked) versions.push("Phi Mu Alpha Sinfonia advances music, brotherhood, scholarship, and service nationwide.");
+  if (document.getElementById("frFormal").checked) versions.push("Founded in 1898, Phi Mu Alpha Sinfonia is a historic national fraternal society in music committed to character and artistic leadership.");
+  if (document.getElementById("frCeremonial").checked) versions.push("In solemn fraternity, Sinfonians unite to elevate one another through devotion to music and noble service.");
+  if (document.getElementById("frRecruitment").checked) versions.push("Sinfonia invites men of musical integrity to grow as artists, leaders, and servants in their communities.");
+  return versions.join(" ");
 }
 
-async function embedPhoto(pdfDoc, page) {
-  const file = photoInput.files?.[0];
-  if (!file) {
-    return;
-  }
-
-  const imageBytes = await file.arrayBuffer();
-  const image = file.type === "image/png"
-    ? await pdfDoc.embedPng(imageBytes)
-    : await pdfDoc.embedJpg(imageBytes);
-
-  const imgScale = Math.max(PHOTO_FRAME.w / image.width, PHOTO_FRAME.h / image.height);
-  const drawW = image.width * imgScale;
-  const drawH = image.height * imgScale;
-
-  page.drawImage(image, {
-    x: PHOTO_FRAME.x + (PHOTO_FRAME.w - drawW) / 2,
-    y: PHOTO_FRAME.y + (PHOTO_FRAME.h - drawH) / 2,
-    width: drawW,
-    height: drawH
-  });
+function renderPreview() {
+  const text = buildBio();
+  preview.innerHTML = text.split("\n\n").map(p => `<p>${p}</p>`).join("");
+  statusMessage.textContent = "Preview updated.";
 }
 
-async function generatePdfBytes() {
-  const existingPdfBytes = await fetch("template.pdf")
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("template.pdf not found");
-      }
-      return res.arrayBuffer();
-    });
-
-  const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-  const firstPage = pdfDoc.getPages()[0];
-  const { width, height } = firstPage.getSize();
-
+async function exportPdf() {
+  const pdfDoc = await PDFLib.PDFDocument.create();
+  const page = pdfDoc.addPage([612, 792]);
   const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
-  const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
-
-  const sheetText = buildSheetText();
-
-  firstPage.drawText(fields.fullName.value, {
-    x: 72,
-    y: height - 150,
-    size: 22,
-    font: boldFont,
-    color: PDFLib.rgb(0.07, 0.07, 0.07)
-  });
-
-  firstPage.drawText("SINFONIAN BIOGRAPHY", {
-    x: 72,
-    y: height - 180,
-    size: 10,
-    font,
-    color: PDFLib.rgb(0.56, 0.09, 0.15)
-  });
-
-  firstPage.drawText(sheetText, {
-    x: 72,
-    y: height - 248,
-    size: 12,
-    lineHeight: 18,
-    maxWidth: width - 230,
-    font,
-    color: PDFLib.rgb(0.07, 0.07, 0.07)
-  });
-
-  await embedPhoto(pdfDoc, firstPage);
-
-  return pdfDoc.save();
+  const bold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+  const text = buildBio();
+  page.drawText(fields.fullName.value || "Sinfonian Biography", { x: 50, y: 740, size: 20, font: bold });
+  page.drawText(text, { x: 50, y: 700, size: 11, lineHeight: 16, maxWidth: 510, font });
+  const bytes = await pdfDoc.save();
+  downloadBlob(bytes, "application/pdf", "biography.pdf");
 }
 
-async function renderPdfPreview() {
-  try {
-    statusMessage.textContent = "Updating PDF preview...";
-    const pdfBytes = await generatePdfBytes();
-
-    if (previewPdfUrl) {
-      URL.revokeObjectURL(previewPdfUrl);
-    }
-
-    previewPdfUrl = URL.createObjectURL(new Blob([pdfBytes], { type: "application/pdf" }));
-    pdfPreview.setAttribute("data", previewPdfUrl);
-    statusMessage.textContent = "PDF preview updated.";
-  } catch (error) {
-    console.error(error);
-    statusMessage.textContent = "Unable to render PDF preview. Make sure template.pdf exists in the repository root.";
-  }
+function exportDoc() {
+  const text = buildBio();
+  const html = `<!doctype html><html><head><meta charset='utf-8'></head><body><h1>${fields.fullName.value}</h1>${text.split("\n\n").map(p=>`<p>${p}</p>`).join("")}</body></html>`;
+  downloadBlob(new TextEncoder().encode(html), "application/msword", "biography.doc");
 }
 
-Object.values(fields).forEach((field) => {
-  field.addEventListener("input", renderPdfPreview);
-  field.addEventListener("change", renderPdfPreview);
-});
-
-positionOptions.forEach((option) => {
-  option.addEventListener("change", renderPdfPreview);
-});
-
-photoInput.addEventListener("change", async () => {
-  await renderPdfPreview();
-});
-
-async function downloadPdf() {
-  try {
-    statusMessage.textContent = "Generating PDF...";
-
-    const pdfBytes = await generatePdfBytes();
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${fields.fullName.value.replace(/\s+/g, "-").toLowerCase()}-bio-sheet.pdf`;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    statusMessage.textContent = "PDF downloaded successfully.";
-  } catch (error) {
-    console.error(error);
-    statusMessage.textContent = "Unable to generate PDF. Make sure template.pdf exists in the repository root.";
-  }
+function downloadBlob(data, type, filename) {
+  const blob = new Blob([data], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
 }
 
-document.getElementById("downloadButton").addEventListener("click", downloadPdf);
+document.querySelectorAll("input, textarea, select").forEach(el => {
+  el.addEventListener("input", renderPreview);
+  el.addEventListener("change", renderPreview);
+});
+
+document.getElementById("downloadPdfButton").addEventListener("click", exportPdf);
+document.getElementById("downloadDocButton").addEventListener("click", exportDoc);
+document.getElementById("printButton").addEventListener("click", () => window.print());
 document.getElementById("resetButton").addEventListener("click", () => location.reload());
-
-buildSheetText();
-renderPdfPreview();
+renderPreview();
