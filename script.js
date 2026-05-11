@@ -9,6 +9,7 @@ let previewUrl;
 let profilePhotoBytes = null;
 let profilePhotoMime = null;
 const TEMPLATE_PATH = "template.pdf";
+const WORD_TEMPLATE_PATH = "template.docx";
 
 const ROLE_DESCRIPTIONS = { president: "guides chapter strategy and strengthens culture through decisive, service-centered leadership", vicePresident: "supports chapter operations and drives member development initiatives", fraternityEducationOfficer: "designs meaningful educational pathways for new and active brothers", treasurer: "safeguards chapter resources through responsible budgeting and financial stewardship", secretary: "maintains records and communication systems that preserve chapter continuity", warden: "upholds chapter standards, ritual integrity, and event readiness" };
 const clean = (s) => (s || "").replace(/\s+/g, " ").trim();
@@ -121,7 +122,18 @@ async function renderPdfPreview() {
 }
 
 async function exportPdf() { const bytes = await buildPdfBytes(); downloadBlob(bytes, "application/pdf", "biography.pdf"); }
-function exportDoc() { const text = buildBio(); const html = `<!doctype html><html><head><meta charset='utf-8'></head><body><h1>${fields.fullName.value}</h1>${text.split("\n\n").map(p=>`<p>${p}</p>`).join("")}</body></html>`; downloadBlob(new TextEncoder().encode(html), "application/msword", "biography.doc"); }
+async function exportDoc() {
+  try {
+    const templateBytes = await fetch(WORD_TEMPLATE_PATH).then(res => {
+      if (!res.ok) throw new Error("Unable to load template.docx");
+      return res.arrayBuffer();
+    });
+    downloadBlob(templateBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "biography.docx");
+    statusMessage.textContent = "Word document exported from template.docx.";
+  } catch (error) {
+    statusMessage.textContent = `Word export failed: ${error.message}`;
+  }
+}
 function downloadBlob(data, type, filename) { const blob = new Blob([data], { type }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); }
 
 document.querySelectorAll("input, textarea, select").forEach(el => { el.addEventListener("input", renderPreview); el.addEventListener("change", renderPreview); });
