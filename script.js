@@ -10,7 +10,7 @@ const TEMPLATE_PATH = "template.pdf";
 const ROLE_DESCRIPTIONS = { president: "guides chapter strategy and strengthens culture through decisive, service-centered leadership", vicePresident: "supports chapter operations and drives member development initiatives", fraternityEducationOfficer: "designs meaningful educational pathways for new and active brothers", treasurer: "safeguards chapter resources through responsible budgeting and financial stewardship", secretary: "maintains records and communication systems that preserve chapter continuity", warden: "upholds chapter standards, ritual integrity, and event readiness" };
 const clean = (s) => (s || "").replace(/\s+/g, " ").trim();
 const titleCase = (s) => clean(s).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-const dedupeWords = (text) => text.replace(/\b(\w+)\s+\1\b/gi, "$1");
+const dedupeWords = (text) => text.replace(/\b(\w+)\s+\1\b/g, (match, word) => (/^[A-Z]/.test(word) ? match : word));
 function pWord(name) { return name; }
 function sentenceVariants(style) { if (style === "ceremonial") return ["With distinction,", "In faithful pursuit of harmony,", "With steadfast purpose,"]; if (style === "recruitment") return ["Notably,", "Prospective members appreciate that", "A standout quality is that"]; if (style === "formal") return ["Additionally,", "Furthermore,", "In addition,"]; return ["Additionally,", "Beyond this,", "Notably,"]; }
 
