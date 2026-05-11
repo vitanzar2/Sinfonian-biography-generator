@@ -24,7 +24,7 @@ function buildBio() { /* unchanged */
     ? `${name} participates in collaborative musical and performance opportunities that support both campus and community engagement.`
     : `With primary emphasis in ${d.instrument || "their principal instrument"}, ${name} participates in collaborative musical and performance opportunities that support both campus and community engagement.`;
   const sections = {
-    intro: `${name} is an ${personLabel} musician from ${d.hometown || "their hometown"} ${d.school ? `affiliated with ${d.school}` : ""}, where ${name} ${grad}.`,
+    intro: `${name} is an ${personLabel} Sinfonian from ${d.hometown || "their hometown"} ${d.school ? `affiliated with ${d.school}` : ""}, where ${name} ${grad}.`,
     musical: `${instrumentPhrase} ${name}'s work reflects continued artistic development, musicianship, and a commitment to excellence through performance and service.`,
     leadership: `As a member of the ${d.chapter || "local chapter"} of Phi Mu Alpha Sinfonia Fraternity of America, ${name} contributes to chapter leadership, brotherhood initiatives, and programs that promote scholarship, service, and the advancement of music within the collegiate community.`,
     service: d.serviceEngagement || d.communityPerformance ? `Service and community engagement includes ${d.serviceEngagement || "ongoing volunteer and chapter-supported initiatives"}. ${d.communityPerformance ? `Outreach performance work includes ${d.communityPerformance}.` : ""}` : "",
