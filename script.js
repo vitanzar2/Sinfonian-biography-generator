@@ -22,12 +22,6 @@ const previewEvent = document.getElementById("previewEvent");
 const statusMessage = document.getElementById("statusMessage");
 const pdfPreview = document.querySelector(".pdf-preview");
 
-const fraternityIntro = [
-  "Phi Mu Alpha Sinfonia Fraternity of America is the nation's oldest and largest secret national fraternal society in music.",
-  "Founded on October 6, 1898, at the New England Conservatory of Music in Boston, Massachusetts, the fraternity was established to unite men through a shared commitment to music, brotherhood, scholarship, and service.",
-  "Sinfonia continues to develop the best and truest fraternal spirit, foster the mutual welfare and brotherhood of musical students, advance music in America, and encourage loyalty to the alma mater."
-].join(" ");
-
 let previewPdfUrl;
 
 function cleanSentence(text, fallback = "") {
@@ -41,30 +35,27 @@ function buildSheetText() {
   );
 
   const name = cleanSentence(d.fullName, "This Sinfonian");
+  const firstName = name.split(" ")[0];
   const hometownClause = d.hometown ? ` from ${d.hometown}` : "";
   const schoolClause = d.school ? ` at ${d.school}` : "";
   const chapterClause = d.chapter ? ` and is a brother of ${d.chapter}` : "";
 
-  const academicLine = `${name}${hometownClause} studies ${cleanSentence(d.major, "music")}${schoolClause}${chapterClause}.`;
-  const musicianshipLine = `${name.split(" ")[0]} focuses on ${cleanSentence(d.voiceOrInstrument, "musicianship and performance")} and is part of the graduating class of ${cleanSentence(d.graduationYear, "the coming year")}.`;
-  const leadershipLine = d.offices
-    ? `Within Sinfonia, he has served as ${d.offices}, demonstrating leadership rooted in brotherhood and service.`
-    : "Within Sinfonia, he demonstrates leadership rooted in brotherhood and service.";
-  const achievementsLine = d.achievements
-    ? `Notable accomplishments include ${d.achievements}.`
-    : "He continues to contribute to his chapter and campus through consistent musical and fraternal involvement.";
-  const notesLine = d.bioNotes
-    ? `Additional biography notes: ${d.bioNotes}.`
-    : "";
+  const introParagraph = `${name}${hometownClause} is pursuing ${cleanSentence(d.major, "music")}${schoolClause}${chapterClause}. He focuses on ${cleanSentence(d.voiceOrInstrument, "musicianship and performance")}, with an expected graduation year of ${cleanSentence(d.graduationYear, "the coming year")}.`;
 
-  const body = [
-    fraternityIntro,
-    academicLine,
-    musicianshipLine,
-    leadershipLine,
-    achievementsLine,
-    notesLine
-  ].filter(Boolean).join(" ");
+  const leadershipParagraph = d.offices
+    ? `Within Phi Mu Alpha Sinfonia, ${firstName} has served as ${d.offices}. In these roles, he has supported the fraternity's mission through leadership, brotherhood, and service-oriented chapter work.`
+    : `Within Phi Mu Alpha Sinfonia, ${firstName} continues to support the fraternity's mission through leadership, brotherhood, and consistent chapter service.`;
+
+  const achievementsParagraph = d.achievements
+    ? `Notable accomplishments include ${d.achievements}. These efforts reflect his commitment to personal growth, campus engagement, and advancing the ideals of Sinfonia.`
+    : `${firstName} remains active in chapter and campus life, contributing through musical participation, service, and fraternity initiatives.`;
+
+  const closingParagraph = d.bioNotes
+    ? `${d.bioNotes}`
+    : `${firstName} strives to represent Sinfonia with excellence in musicianship, scholarship, and service.`;
+
+  const paragraphs = [introParagraph, leadershipParagraph, achievementsParagraph, closingParagraph];
+  const body = paragraphs.join("\n\n");
 
   bioOutput.textContent = body;
   previewName.textContent = d.fullName;
