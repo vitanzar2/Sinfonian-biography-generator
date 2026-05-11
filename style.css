@@ -1,1 +1,137 @@
+:root {
+  --sinfonia-black: #111111;
+  --sinfonia-red: #8f1725;
+  --sinfonia-gold: #9b741f;
+  --paper: #f8f4ec;
+}
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--sinfonia-black);
+  font-family: Georgia, serif;
+}
+
+.site-header {
+  background: var(--sinfonia-black);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--sinfonia-gold);
+  font-size: 0.8rem;
+}
+
+.harmony-lockup {
+  text-align: right;
+}
+
+.harmony-lockup span {
+  color: var(--sinfonia-red);
+}
+
+.harmony-lockup strong {
+  display: block;
+  font-style: italic;
+  font-size: 2rem;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.panel {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  border: 1px solid #d0d0d0;
+  font-size: 1rem;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  border: none;
+  padding: 0.9rem 1.2rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#downloadButton {
+  background: var(--sinfonia-red);
+  color: white;
+}
+
+#resetButton {
+  background: #ececec;
+}
+
+.preview-card {
+  border: 2px solid #d9c38d;
+  background: #fffaf0;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+
+.preview-card h2 {
+  font-size: 2.5rem;
+  margin-top: 0.5rem;
+}
+
+#previewEvent {
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--sinfonia-red);
+  font-size: 0.8rem;
+}
+
+#bioOutput {
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+}
