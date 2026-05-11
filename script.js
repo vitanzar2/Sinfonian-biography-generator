@@ -1,4 +1,4 @@
-const ids = ["fullName","personType","styleMode","lengthMode","outputMode","chapter","school","hometown","majors","minors","graduationYear","instrument","genreFocus","conductingExperience","compositionExperience","ensembles","communityPerformance","serviceEngagement","mentorship","leadershipPosition","leadershipAccomplishments","achievements","militaryChurchCommunity","whyJoined","careerGoals","values","motto","sectionOrder"];
+const ids = ["fullName","personType","styleMode","lengthMode","outputMode","chapter","school","hometown","majors","minors","graduationYear","instrument","omitInstrumentLabel","genreFocus","conductingExperience","compositionExperience","ensembles","communityPerformance","serviceEngagement","mentorship","leadershipPosition","leadershipAccomplishments","achievements","militaryChurchCommunity","whyJoined","careerGoals","values","motto","sectionOrder"];
 const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
 const statusMessage = document.getElementById("statusMessage");
 const preview = document.getElementById("livePreview");
@@ -19,9 +19,13 @@ function buildBio() { /* unchanged */
   const name = titleCase(d.fullName || "This Sinfonian");
   const grad = ["alumni","professional"].includes(d.personType) ? `completed studies in ${d.graduationYear || "their program"}` : `is expected to graduate in ${d.graduationYear || "a future term"}`;
   const personLabel = d.personType === "undergrad" ? "undergraduate" : d.personType;
+  const shouldOmitInstrumentLabel = fields.omitInstrumentLabel.checked;
+  const instrumentPhrase = shouldOmitInstrumentLabel
+    ? `${name} participates in collaborative musical and performance opportunities that support both campus and community engagement.`
+    : `With primary emphasis in ${d.instrument || "their principal instrument"}, ${name} participates in collaborative musical and performance opportunities that support both campus and community engagement.`;
   const sections = {
     intro: `${name} is an ${personLabel} musician from ${d.hometown || "their hometown"} ${d.school ? `affiliated with ${d.school}` : ""}, where ${name} ${grad}.`,
-    musical: `With primary emphasis in ${d.instrument || "their principal instrument"}, ${name} participates in collaborative musical and performance opportunities that support both campus and community engagement. ${name}'s work reflects continued artistic development, musicianship, and a commitment to excellence through performance and service.`,
+    musical: `${instrumentPhrase} ${name}'s work reflects continued artistic development, musicianship, and a commitment to excellence through performance and service.`,
     leadership: `As a member of the ${d.chapter || "local chapter"} of Phi Mu Alpha Sinfonia Fraternity of America, ${name} contributes to chapter leadership, brotherhood initiatives, and programs that promote scholarship, service, and the advancement of music within the collegiate community.`,
     service: d.serviceEngagement || d.communityPerformance ? `Service and community engagement includes ${d.serviceEngagement || "ongoing volunteer and chapter-supported initiatives"}. ${d.communityPerformance ? `Outreach performance work includes ${d.communityPerformance}.` : ""}` : "",
     honors: `${d.achievements ? `${name} has earned recognition including ${d.achievements}.` : ""}`,
@@ -33,7 +37,10 @@ function buildBio() { /* unchanged */
   const order = (d.sectionOrder || "intro,musical,leadership,service,honors,values,fraternity,future,closing").split(",").map(s => clean(s));
   let picked = order.map(k => sections[k]).filter(Boolean);
   if (d.lengthMode === "short") picked = picked.slice(0, 4);
-  if (d.outputMode === "social") return dedupeWords(`${name} | ${d.instrument || "Musician"}. ${d.school || ""} ${d.achievements || ""} ${d.careerGoals || ""}`);
+  if (d.outputMode === "social") {
+    const socialTag = shouldOmitInstrumentLabel ? "Sinfonian" : (d.instrument || "Musician");
+    return dedupeWords(`${name} | ${socialTag}. ${d.school || ""} ${d.achievements || ""} ${d.careerGoals || ""}`);
+  }
   return dedupeWords(picked.join("\n\n")).replace(/\s+\./g, ".");
 }
 function buildFraternityParagraph(d) { const versions = []; if (document.getElementById("frFormal").checked) versions.push("Founded on October 6, 1898, at the New England Conservatory in Boston, Massachusetts, Phi Mu Alpha Sinfonia Fraternity of America is the nation’s oldest and largest secret national fraternal society in music. The fraternity seeks to develop the best and truest fraternal spirit; foster the mutual welfare and brotherhood of musical students; advance music in America; and encourage loyalty to the alma mater."); if (document.getElementById("frShort").checked && !document.getElementById("frFormal").checked) versions.push("Phi Mu Alpha Sinfonia advances music, brotherhood, scholarship, and service nationwide."); if (document.getElementById("frCeremonial").checked) versions.push("In solemn fraternity, Sinfonians unite to elevate one another through devotion to music and noble service."); if (document.getElementById("frRecruitment").checked) versions.push("Sinfonia invites men of musical integrity to grow as artists, leaders, and servants in their communities."); return versions.join(" "); }

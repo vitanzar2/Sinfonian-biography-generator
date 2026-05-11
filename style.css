@@ -13,6 +13,8 @@ body { margin: 0; background: var(--paper); color: #161616; font-family: "Georgi
 .panel { background: #fff; border-radius: 14px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
 .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
 label, legend { font-weight: 700; font-size: .95rem; margin-top: .65rem; display: block; }
+.inline-option { display: inline-flex; align-items: center; gap: .4rem; margin-top: .45rem; font-weight: 500; font-size: .9rem; }
+.inline-option input { width: auto; }
 input, textarea, select { width: 100%; border: 1px solid #cfcfcf; border-radius: 10px; padding: .6rem .7rem; font-size: .97rem; }
 textarea { min-height: 76px; resize: vertical; }
 fieldset { border: 1px solid #d7d7d7; border-radius: 10px; margin-top: .8rem; padding: .5rem .7rem; }
