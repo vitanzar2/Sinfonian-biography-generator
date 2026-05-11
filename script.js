@@ -66,6 +66,13 @@ function updatePhotoPreview() {
   photoPreview.onload = () => URL.revokeObjectURL(url);
 }
 
+const PHOTO_FRAME = {
+  x: 72,
+  y: 450,
+  w: 130,
+  h: 160
+};
+
 async function embedPhoto(pdfDoc, page) {
   const file = photoInput.files?.[0];
   if (!file) {
@@ -77,22 +84,13 @@ async function embedPhoto(pdfDoc, page) {
     ? await pdfDoc.embedPng(imageBytes)
     : await pdfDoc.embedJpg(imageBytes);
 
-  const { width, height } = page.getSize();
-
-  const frame = {
-    x: width - 200,
-    y: height - 280,
-    w: 125,
-    h: 160
-  };
-
-  const imgScale = Math.min(frame.w / image.width, frame.h / image.height);
+  const imgScale = Math.min(PHOTO_FRAME.w / image.width, PHOTO_FRAME.h / image.height);
   const drawW = image.width * imgScale;
   const drawH = image.height * imgScale;
 
   page.drawImage(image, {
-    x: frame.x + (frame.w - drawW) / 2,
-    y: frame.y + (frame.h - drawH) / 2,
+    x: PHOTO_FRAME.x + (PHOTO_FRAME.w - drawW) / 2,
+    y: PHOTO_FRAME.y + (PHOTO_FRAME.h - drawH) / 2,
     width: drawW,
     height: drawH
   });
@@ -109,7 +107,7 @@ async function generatePdfBytes() {
 
   const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
   const firstPage = pdfDoc.getPages()[0];
-  const { width, height } = firstPage.getSize();
+  const { height } = firstPage.getSize();
 
   const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
   const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
@@ -134,10 +132,10 @@ async function generatePdfBytes() {
 
   firstPage.drawText(sheetText, {
     x: 72,
-    y: height - 230,
+    y: 310,
     size: 12,
     lineHeight: 18,
-    maxWidth: width - 230,
+    maxWidth: 468,
     font,
     color: PDFLib.rgb(0.07, 0.07, 0.07)
   });
