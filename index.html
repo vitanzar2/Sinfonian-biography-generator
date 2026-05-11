@@ -1,1 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sinfonian Biography Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">Phi Mu Alpha Sinfonia</p>
+      <h1>Biography Generator</h1>
+    </div>
+
+    <div class="harmony-lockup">
+      <span>among men</span>
+      <strong>harmony</strong>
+    </div>
+  </header>
+
+  <main class="app-shell">
+
+    <section class="panel">
+      <h2>Fill in the blanks</h2>
+
+      <label>Biography Style</label>
+      <select id="templateChoice">
+        <option value="formal">Formal Program Bio</option>
+        <option value="concise">Concise Introduction</option>
+        <option value="nomination">Award / Nomination Bio</option>
+      </select>
+
+      <label>Full Name</label>
+      <input id="fullName" type="text" value="John Doe" />
+
+      <label>Chapter</label>
+      <input id="chapter" type="text" value="Alpha Alpha Chapter" />
+
+      <label>School</label>
+      <input id="school" type="text" value="Example University" />
+
+      <label>Hometown</label>
+      <input id="hometown" type="text" value="Hometown, State" />
+
+      <label>Major</label>
+      <input id="major" type="text" value="Music Education" />
+
+      <label>Voice / Instrument</label>
+      <input id="voiceOrInstrument" type="text" value="Baritone Voice" />
+
+      <label>Graduation Year</label>
+      <input id="graduationYear" type="text" value="2026" />
+
+      <label>Offices / Roles</label>
+      <input id="offices" type="text" value="Chapter President" />
+
+      <label>Achievements</label>
+      <textarea id="achievements"></textarea>
+
+      <label>Personal Notes</label>
+      <textarea id="bioNotes"></textarea>
+
+      <label>Event Name</label>
+      <input id="eventName" type="text" value="Recognition Program" />
+    </section>
+
+    <section class="panel">
+
+      <div class="toolbar">
+        <button id="resetButton">Reset</button>
+        <button id="downloadButton">Download PDF</button>
+      </div>
+
+      <div class="preview-card">
+        <p id="previewEvent"></p>
+        <h2 id="previewName"></h2>
+        <div id="bioOutput"></div>
+      </div>
+
+      <label>Custom Final Text</label>
+      <textarea id="customText"></textarea>
+
+      <p id="statusMessage"></p>
+
+    </section>
+
+  </main>
+
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
