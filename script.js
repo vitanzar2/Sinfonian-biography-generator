@@ -11,7 +11,7 @@ const fields = {
   bioNotes: document.getElementById("bioNotes")
 };
 
-const PHOTO_FRAME = { x: 445, y: 468, w: 120, h: 158 };
+const PHOTO_FRAME = { x: 445, y: 368, w: 120, h: 158 };
 
 const photoInput = document.getElementById("profilePhoto");
 const photoPreview = document.getElementById("photoPreview");
