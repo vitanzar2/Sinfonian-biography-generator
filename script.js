@@ -55,17 +55,16 @@ function buildSheetText() {
     : "He continues to contribute to his chapter and campus through consistent musical and fraternal involvement.";
   const notesLine = d.bioNotes
     ? `Additional biography notes: ${d.bioNotes}.`
-    : "This biography sheet was generated to support formal recognition and chapter records.";
+    : "";
 
   const body = [
     fraternityIntro,
-    "",
     academicLine,
     musicianshipLine,
     leadershipLine,
     achievementsLine,
     notesLine
-  ].join("\n\n");
+  ].filter(Boolean).join(" ");
 
   bioOutput.textContent = body;
   previewName.textContent = d.fullName;
