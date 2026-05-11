@@ -1,4 +1,4 @@
-const ids = ["fullName","personType","styleMode","lengthMode","outputMode","chapter","school","hometown","degree","majors","minors","graduationYear","instrument","omitInstrumentLabel","genreFocus","conductingExperience","compositionExperience","ensembles","communityPerformance","serviceEngagement","mentorship","leadershipPosition","leadershipAccomplishments","achievements","militaryChurchCommunity","whyJoined","careerGoals","values","motto","sectionOrder"];
+const ids = ["fullName","personType","styleMode","lengthMode","outputMode","chapter","school","hometown","degree","majors","minors","graduationYear","instrument","omitInstrumentLabel","genreFocus","conductingExperience","compositionExperience","ensembles","communityPerformance","serviceEngagement","mentorship","leadershipPosition","leadershipAccomplishments","achievements","militaryChurchCommunity","whyJoined","careerGoals","values","sectionOrder"];
 const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
 const statusMessage = document.getElementById("statusMessage");
 const preview = document.getElementById("livePreview");
@@ -41,7 +41,7 @@ function buildBio() { /* unchanged */
     mentorship: d.mentorship ? `Mentorship and teaching experience includes ${d.mentorship}.` : "",
     community: d.militaryChurchCommunity ? `Additional musical service includes ${d.militaryChurchCommunity}.` : "",
     honors: `${d.achievements ? `${name} has earned recognition including ${d.achievements}.` : ""}`,
-    values: `${d.whyJoined ? `${name} joined Sinfonia because ${d.whyJoined}.` : ""} ${d.values ? `Guiding values include ${d.values}.` : ""} ${d.motto ? `Personal motto: “${d.motto}.”` : ""}`,
+    values: `${d.whyJoined ? `${name} joined Sinfonia because ${d.whyJoined}.` : ""} ${d.values ? `Guiding values include ${d.values}.` : ""}`,
     fraternity: buildFraternityParagraph(d),
     future: `${d.careerGoals ? `Future aspirations include ${d.careerGoals}.` : `Through leadership, musicianship, scholarship, and service, ${name} continues to uphold the ideals of Phi Mu Alpha Sinfonia while pursuing personal and professional growth through music.`}`,
     closing: d.outputMode === "nomination" ? `${name} is respectfully recommended for award consideration based on sustained excellence and exemplary character.` : ""
