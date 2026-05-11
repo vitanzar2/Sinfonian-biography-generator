@@ -18,12 +18,15 @@ const bioOutput = document.getElementById("bioOutput");
 const previewName = document.getElementById("previewName");
 const previewEvent = document.getElementById("previewEvent");
 const statusMessage = document.getElementById("statusMessage");
+const pdfPreview = document.querySelector(".pdf-preview");
 
 const fraternityIntro = [
   "Phi Mu Alpha Sinfonia is America's oldest secret national fraternal society in music.",
   "The Fraternity builds men of integrity through brotherhood, service, and leadership, while advancing music in America.",
   "Sinfonians support their campuses and communities by creating meaningful musical experiences and encouraging excellence in all members."
 ].join(" ");
+
+let previewPdfUrl;
 
 function buildSheetText() {
   const d = Object.fromEntries(
@@ -63,14 +66,6 @@ function updatePhotoPreview() {
   photoPreview.onload = () => URL.revokeObjectURL(url);
 }
 
-Object.values(fields).forEach((field) => {
-  field.addEventListener("input", buildSheetText);
-});
-
-photoInput.addEventListener("change", updatePhotoPreview);
-
-buildSheetText();
-
 async function embedPhoto(pdfDoc, page) {
   const file = photoInput.files?.[0];
   if (!file) {
@@ -103,56 +98,87 @@ async function embedPhoto(pdfDoc, page) {
   });
 }
 
+async function generatePdfBytes() {
+  const existingPdfBytes = await fetch("template.pdf")
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("template.pdf not found");
+      }
+      return res.arrayBuffer();
+    });
+
+  const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+  const firstPage = pdfDoc.getPages()[0];
+  const { width, height } = firstPage.getSize();
+
+  const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
+  const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+
+  const sheetText = buildSheetText();
+
+  firstPage.drawText(fields.fullName.value, {
+    x: 72,
+    y: height - 150,
+    size: 22,
+    font: boldFont,
+    color: PDFLib.rgb(0.07, 0.07, 0.07)
+  });
+
+  firstPage.drawText(fields.eventName.value.toUpperCase(), {
+    x: 72,
+    y: height - 180,
+    size: 10,
+    font,
+    color: PDFLib.rgb(0.56, 0.09, 0.15)
+  });
+
+  firstPage.drawText(sheetText, {
+    x: 72,
+    y: height - 230,
+    size: 12,
+    lineHeight: 18,
+    maxWidth: width - 230,
+    font,
+    color: PDFLib.rgb(0.07, 0.07, 0.07)
+  });
+
+  await embedPhoto(pdfDoc, firstPage);
+
+  return pdfDoc.save();
+}
+
+async function renderPdfPreview() {
+  try {
+    statusMessage.textContent = "Updating PDF preview...";
+    const pdfBytes = await generatePdfBytes();
+
+    if (previewPdfUrl) {
+      URL.revokeObjectURL(previewPdfUrl);
+    }
+
+    previewPdfUrl = URL.createObjectURL(new Blob([pdfBytes], { type: "application/pdf" }));
+    pdfPreview.setAttribute("data", previewPdfUrl);
+    statusMessage.textContent = "PDF preview updated.";
+  } catch (error) {
+    console.error(error);
+    statusMessage.textContent = "Unable to render PDF preview. Make sure template.pdf exists in the repository root.";
+  }
+}
+
+Object.values(fields).forEach((field) => {
+  field.addEventListener("input", renderPdfPreview);
+});
+
+photoInput.addEventListener("change", async () => {
+  updatePhotoPreview();
+  await renderPdfPreview();
+});
+
 async function downloadPdf() {
   try {
     statusMessage.textContent = "Generating PDF...";
 
-    const existingPdfBytes = await fetch("template.pdf")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("template.pdf not found");
-        }
-        return res.arrayBuffer();
-      });
-
-    const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-    const firstPage = pdfDoc.getPages()[0];
-    const { width, height } = firstPage.getSize();
-
-    const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
-    const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
-
-    const sheetText = buildSheetText();
-
-    firstPage.drawText(fields.fullName.value, {
-      x: 72,
-      y: height - 150,
-      size: 22,
-      font: boldFont,
-      color: PDFLib.rgb(0.07, 0.07, 0.07)
-    });
-
-    firstPage.drawText(fields.eventName.value.toUpperCase(), {
-      x: 72,
-      y: height - 180,
-      size: 10,
-      font,
-      color: PDFLib.rgb(0.56, 0.09, 0.15)
-    });
-
-    firstPage.drawText(sheetText, {
-      x: 72,
-      y: height - 230,
-      size: 12,
-      lineHeight: 18,
-      maxWidth: width - 230,
-      font,
-      color: PDFLib.rgb(0.07, 0.07, 0.07)
-    });
-
-    await embedPhoto(pdfDoc, firstPage);
-
-    const pdfBytes = await pdfDoc.save();
+    const pdfBytes = await generatePdfBytes();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
 
@@ -174,3 +200,6 @@ async function downloadPdf() {
 
 document.getElementById("downloadButton").addEventListener("click", downloadPdf);
 document.getElementById("resetButton").addEventListener("click", () => location.reload());
+
+buildSheetText();
+renderPdfPreview();
