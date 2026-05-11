@@ -8,8 +8,7 @@ const fields = {
   graduationYear: document.getElementById("graduationYear"),
   offices: document.getElementById("offices"),
   achievements: document.getElementById("achievements"),
-  bioNotes: document.getElementById("bioNotes"),
-  eventName: document.getElementById("eventName")
+  bioNotes: document.getElementById("bioNotes")
 };
 
 const PHOTO_FRAME = { x: 396, y: 468, w: 150, h: 195 };
@@ -35,31 +34,27 @@ function buildSheetText() {
   );
 
   const name = cleanSentence(d.fullName, "This Sinfonian");
-  const firstName = name.split(" ")[0];
-  const hometownClause = d.hometown ? ` from ${d.hometown}` : "";
   const schoolClause = d.school ? ` at ${d.school}` : "";
   const chapterClause = d.chapter ? ` and is a brother of ${d.chapter}` : "";
 
-  const introParagraph = `${name}${hometownClause} is pursuing ${cleanSentence(d.major, "music")}${schoolClause}${chapterClause}. He focuses on ${cleanSentence(d.voiceOrInstrument, "musicianship and performance")}, with an expected graduation year of ${cleanSentence(d.graduationYear, "the coming year")}.`;
+  const introParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "his hometown")}, currently pursuing a ${cleanSentence(d.major, "music")} degree${schoolClause}. He is expected to graduate in ${cleanSentence(d.graduationYear, "the coming year")} and is actively involved in both the academic and performance communities within his department.`;
 
   const leadershipParagraph = d.offices
-    ? `Within Phi Mu Alpha Sinfonia, ${firstName} has served as ${d.offices}. In these roles, he has supported the fraternity's mission through leadership, brotherhood, and service-oriented chapter work.`
-    : `Within Phi Mu Alpha Sinfonia, ${firstName} continues to support the fraternity's mission through leadership, brotherhood, and consistent chapter service.`;
+    ? `${name} serves as ${d.offices}${chapterClause ? ` of ${d.chapter}` : " within Phi Mu Alpha Sinfonia"}, where he provides leadership and guidance to collegiate membership. In this role, he works to strengthen brotherhood, encourage professional and musical excellence, and support the fraternity's mission of advancing music in America through service and fellowship.`
+    : `${name} is active within Phi Mu Alpha Sinfonia, where he supports collegiate membership through leadership, brotherhood, and service. He works to encourage professional and musical excellence while advancing the fraternity's mission of music in America.`;
 
-  const achievementsParagraph = d.achievements
-    ? `Notable accomplishments include ${d.achievements}. These efforts reflect his commitment to personal growth, campus engagement, and advancing the ideals of Sinfonia.`
-    : `${firstName} remains active in chapter and campus life, contributing through musical participation, service, and fraternity initiatives.`;
+  const fraternityParagraph = `Phi Mu Alpha Sinfonia Fraternity of America is the nation's oldest and largest secret national fraternal society in music. Founded on October 6, 1898, at the New England Conservatory of Music in Boston, Massachusetts, the fraternity was established to unite men through a shared commitment to music, brotherhood, scholarship, and service.`;
 
   const closingParagraph = d.bioNotes
-    ? `${d.bioNotes}`
-    : `${firstName} strives to represent Sinfonia with excellence in musicianship, scholarship, and service.`;
+    ? d.bioNotes
+    : `The objectives of Phi Mu Alpha Sinfonia are to develop the best and truest fraternal spirit; foster the mutual welfare and brotherhood of musical students; advance music in America; and encourage loyalty to the alma mater. Through collegiate chapters, alumni associations, and national programs, Sinfonians continue to uphold these ideals by serving their campuses, communities, and the broader musical profession.`;
 
-  const paragraphs = [introParagraph, leadershipParagraph, achievementsParagraph, closingParagraph];
+  const paragraphs = [introParagraph, leadershipParagraph, fraternityParagraph, closingParagraph];
   const body = paragraphs.join("\n\n");
 
   bioOutput.textContent = body;
   previewName.textContent = d.fullName;
-  previewEvent.textContent = d.eventName;
+  previewEvent.textContent = "Sinfonian Biography";
 
   return body;
 }
@@ -127,7 +122,7 @@ async function generatePdfBytes() {
     color: PDFLib.rgb(0.07, 0.07, 0.07)
   });
 
-  firstPage.drawText(fields.eventName.value.toUpperCase(), {
+  firstPage.drawText("SINFONIAN BIOGRAPHY", {
     x: 72,
     y: height - 180,
     size: 10,
