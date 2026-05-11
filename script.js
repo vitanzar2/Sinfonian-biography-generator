@@ -66,13 +66,6 @@ function updatePhotoPreview() {
   photoPreview.onload = () => URL.revokeObjectURL(url);
 }
 
-const PHOTO_FRAME = {
-  x: 72,
-  y: 450,
-  w: 130,
-  h: 160
-};
-
 async function embedPhoto(pdfDoc, page) {
   const file = photoInput.files?.[0];
   if (!file) {
@@ -107,7 +100,7 @@ async function generatePdfBytes() {
 
   const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
   const firstPage = pdfDoc.getPages()[0];
-  const { height } = firstPage.getSize();
+  const { width, height } = firstPage.getSize();
 
   const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
   const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
@@ -132,10 +125,10 @@ async function generatePdfBytes() {
 
   firstPage.drawText(sheetText, {
     x: 72,
-    y: 310,
+    y: height - 230,
     size: 12,
     lineHeight: 18,
-    maxWidth: 468,
+    maxWidth: width - 230,
     font,
     color: PDFLib.rgb(0.07, 0.07, 0.07)
   });
