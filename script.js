@@ -3,8 +3,11 @@ const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)
 const statusMessage = document.getElementById("statusMessage");
 const preview = document.getElementById("livePreview");
 const pdfPreview = document.getElementById("pdfPreview");
+const profilePhotoInput = document.getElementById("profilePhoto");
 
 let previewUrl;
+let profilePhotoBytes = null;
+let profilePhotoMime = null;
 const TEMPLATE_PATH = "template.pdf";
 
 const ROLE_DESCRIPTIONS = { president: "guides chapter strategy and strengthens culture through decisive, service-centered leadership", vicePresident: "supports chapter operations and drives member development initiatives", fraternityEducationOfficer: "designs meaningful educational pathways for new and active brothers", treasurer: "safeguards chapter resources through responsible budgeting and financial stewardship", secretary: "maintains records and communication systems that preserve chapter continuity", warden: "upholds chapter standards, ritual integrity, and event readiness" };
@@ -73,7 +76,25 @@ async function buildPdfBytes() {
   const title = fields.fullName.value || "Sinfonian Biography";
   const text = buildBio();
 
-  const box = { x: 66, topY: 560, bottomY: 70, maxWidth: 430 };
+  let availableTextWidth = 430;
+
+  if (profilePhotoBytes && profilePhotoMime) {
+    const embeddedPhoto = profilePhotoMime === "image/png"
+      ? await pdfDoc.embedPng(profilePhotoBytes)
+      : await pdfDoc.embedJpg(profilePhotoBytes);
+    const maxPhotoWidth = 130;
+    const maxPhotoHeight = 150;
+    const scale = Math.min(maxPhotoWidth / embeddedPhoto.width, maxPhotoHeight / embeddedPhoto.height, 1);
+    const photoWidth = embeddedPhoto.width * scale;
+    const photoHeight = embeddedPhoto.height * scale;
+    const photoX = page.getWidth() - 66 - photoWidth;
+    const photoY = height - 70 - photoHeight;
+
+    page.drawImage(embeddedPhoto, { x: photoX, y: photoY, width: photoWidth, height: photoHeight });
+    availableTextWidth = Math.max(300, photoX - 78);
+  }
+
+  const box = { x: 66, topY: 560, bottomY: 70, maxWidth: availableTextWidth };
   let fontSize = 11; let lineHeight = 16; let lines = wrapLines(text, font, fontSize, box.maxWidth);
   while (fontSize > 8 && (lines.length * lineHeight > box.topY - box.bottomY)) {
     fontSize -= 0.5; lineHeight -= 0.7; lines = wrapLines(text, font, fontSize, box.maxWidth);
@@ -102,6 +123,28 @@ function exportDoc() { const text = buildBio(); const html = `<!doctype html><ht
 function downloadBlob(data, type, filename) { const blob = new Blob([data], { type }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); }
 
 document.querySelectorAll("input, textarea, select").forEach(el => { el.addEventListener("input", renderPreview); el.addEventListener("change", renderPreview); });
+
+profilePhotoInput.addEventListener("change", async () => {
+  const [file] = profilePhotoInput.files || [];
+  if (!file) {
+    profilePhotoBytes = null;
+    profilePhotoMime = null;
+    renderPreview();
+    return;
+  }
+  if (!["image/png", "image/jpeg"].includes(file.type)) {
+    statusMessage.textContent = "Please select a PNG or JPEG headshot.";
+    profilePhotoInput.value = "";
+    profilePhotoBytes = null;
+    profilePhotoMime = null;
+    renderPreview();
+    return;
+  }
+  profilePhotoBytes = await file.arrayBuffer();
+  profilePhotoMime = file.type;
+  renderPreview();
+});
+
 document.getElementById("downloadPdfButton").addEventListener("click", exportPdf);
 document.getElementById("downloadDocButton").addEventListener("click", exportDoc);
 document.getElementById("printButton").addEventListener("click", () => window.print());
