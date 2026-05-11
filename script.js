@@ -6,8 +6,27 @@ const fields = {
   major: document.getElementById("major"),
   voiceOrInstrument: document.getElementById("voiceOrInstrument"),
   graduationYear: document.getElementById("graduationYear"),
-  offices: document.getElementById("offices"),
+  hasGraduated: document.getElementById("hasGraduated"),
+  musicalInvolvement: document.getElementById("musicalInvolvement"),
+  leadershipAccomplishments: document.getElementById("leadershipAccomplishments"),
+  whyJoined: document.getElementById("whyJoined"),
+  careerGoals: document.getElementById("careerGoals"),
+  serviceEngagement: document.getElementById("serviceEngagement"),
   bioNotes: document.getElementById("bioNotes")
+};
+
+const POSITION_DESCRIPTIONS = {
+  president: "provides leadership for chapter operations and strategic planning",
+  vicePresident: "assists in chapter administration and member development",
+  fraternityEducationOfficer: "supports the development and education of new members",
+  treasurer: "oversees chapter finances and budgeting"
+};
+
+const POSITION_LABELS = {
+  president: "President",
+  vicePresident: "Vice President",
+  fraternityEducationOfficer: "Fraternity Education Officer",
+  treasurer: "Treasurer"
 };
 
 const PHOTO_FRAME = { x: 445, y: 600, w: 120, h: 158 };
@@ -15,12 +34,45 @@ const PHOTO_FRAME = { x: 445, y: 600, w: 120, h: 158 };
 const photoInput = document.getElementById("profilePhoto");
 const statusMessage = document.getElementById("statusMessage");
 const pdfPreview = document.querySelector(".pdf-preview");
+const positionCheckboxes = [...document.querySelectorAll("#positionSelections input[type='checkbox']")];
 
 let previewPdfUrl;
 
 function cleanSentence(text, fallback = "") {
   const value = text.trim();
   return value ? value : fallback;
+}
+
+function buildGraduationClause(graduationYear, hasGraduated) {
+  if (hasGraduated === "yes") {
+    return graduationYear
+      ? ` and has successfully completed their degree in ${graduationYear}`
+      : " and has successfully completed their degree in their field";
+  }
+
+  if (!graduationYear) {
+    return "";
+  }
+
+  return ` and anticipates completing this work in ${graduationYear}`;
+}
+
+function buildLeadershipRoleSentence(name, chapter) {
+  const selectedPositions = positionCheckboxes
+    .filter((checkbox) => checkbox.checked)
+    .map((checkbox) => checkbox.value);
+
+  if (!selectedPositions.length) {
+    return `${name} is active in collaborative and service-focused efforts, supporting others through leadership, musicianship, and community engagement.`;
+  }
+
+  const chapterClause = chapter ? ` within ${chapter}` : "";
+  const rolesList = selectedPositions.map((position) => POSITION_LABELS[position]).join(", ");
+  const roleDetails = selectedPositions
+    .map((position) => `${POSITION_LABELS[position]}: ${POSITION_DESCRIPTIONS[position]}`)
+    .join("; ");
+
+  return `${name} serves as ${rolesList}${chapterClause}. In these roles, ${name} ${roleDetails}.`;
 }
 
 function buildSheetText() {
@@ -30,34 +82,34 @@ function buildSheetText() {
 
   const name = cleanSentence(d.fullName, "This Sinfonian");
   const schoolClause = d.school ? ` at ${d.school}` : "";
-  const chapterClause = d.chapter ? ` with ${d.chapter}` : "";
-  const currentYear = new Date().getFullYear();
-  const parsedYear = Number.parseInt(d.graduationYear, 10);
-  const hasValidGraduationYear = Number.isInteger(parsedYear);
-  const graduationClause = hasValidGraduationYear
-    ? parsedYear < currentYear
-      ? ` and had graduated in ${parsedYear}`
-      : ` and anticipate completing this work in ${parsedYear}`
-    : d.graduationYear
-      ? ` and anticipate completing this work in ${d.graduationYear}`
-      : "";
+  const graduationClause = buildGraduationClause(d.graduationYear, d.hasGraduated);
 
-  const introParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "their hometown")}${schoolClause}. They are focused on ${cleanSentence(d.major, "music")}${graduationClause}. Their path reflects artistic growth, collaboration, and service through performance, while supporting peers and contributing to a strong culture of excellence.`;
+  const personalAcademicParagraph = `${name} is a ${cleanSentence(d.voiceOrInstrument, "musician")} from ${cleanSentence(d.hometown, "their hometown")}${schoolClause}. They are focused on ${cleanSentence(d.major, "music")}${graduationClause}.`;
 
-  const leadershipParagraph = d.offices
-    ? `${name} contributes through ${d.offices}${chapterClause}, helping organize initiatives, mentor fellow members, and support programs that promote musicianship, scholarship, and community engagement.`
-    : `${name} is active in collaborative and service-focused efforts, supporting others through leadership, musicianship, and community engagement.`;
+  const musicalInvolvementParagraph = d.musicalInvolvement
+    ? `${name}'s musical involvement includes ${d.musicalInvolvement}.`
+    : `${name} has actively contributed to musical ensembles and collaborative performance opportunities that support artistic excellence.`;
 
-  const fraternityParagraph = `Phi Mu Alpha Sinfonia Fraternity of America is the nation's oldest and largest secret national fraternal society in music. Founded on October 6, 1898, at the New England Conservatory of Music in Boston, Massachusetts, the fraternity was established to unite men through a shared commitment to music, brotherhood, scholarship, and service.`;
+  const fraternityLeadershipParagraph = d.leadershipAccomplishments
+    ? `${buildLeadershipRoleSentence(name, d.chapter)} ${name}'s leadership accomplishments include ${d.leadershipAccomplishments}.`
+    : buildLeadershipRoleSentence(name, d.chapter);
+
+  const personalValuesGoalsParagraph = `${d.whyJoined ? `${name} joined Phi Mu Alpha Sinfonia because ${d.whyJoined}.` : `${name} joined Phi Mu Alpha Sinfonia to strengthen brotherhood through a shared commitment to music, scholarship, and service.`} ${d.careerGoals ? `${name}'s career goals include ${d.careerGoals}.` : `${name} is dedicated to lifelong artistic growth and meaningful professional impact.`} ${d.serviceEngagement ? `Their service and community engagement includes ${d.serviceEngagement}.` : `They remain committed to service and community engagement through campus and local initiatives.`}`;
+
+  const fraternityParagraph = "Phi Mu Alpha Sinfonia Fraternity of America is the nation's oldest and largest secret national fraternal society in music. Founded on October 6, 1898, at the New England Conservatory of Music in Boston, Massachusetts, the fraternity was established to unite men through a shared commitment to music, brotherhood, scholarship, and service.";
 
   const closingParagraph = d.bioNotes
     ? d.bioNotes
-    : `The objectives of Phi Mu Alpha Sinfonia are to develop the best and truest fraternal spirit; foster the mutual welfare and brotherhood of musical students; advance music in America; and encourage loyalty to the alma mater. Through collegiate chapters, alumni associations, and national programs, Sinfonians continue to uphold these ideals by serving their campuses, communities, and the broader musical profession.`;
+    : "The objectives of Phi Mu Alpha Sinfonia are to develop the best and truest fraternal spirit; foster the mutual welfare and brotherhood of musical students; advance music in America; and encourage loyalty to the alma mater. Through collegiate chapters, alumni associations, and national programs, Sinfonians continue to uphold these ideals by serving their campuses, communities, and the broader musical profession.";
 
-  const paragraphs = [introParagraph, leadershipParagraph, fraternityParagraph, closingParagraph];
-  const body = paragraphs.join("\n\n");
-
-  return body;
+  return [
+    personalAcademicParagraph,
+    musicalInvolvementParagraph,
+    fraternityLeadershipParagraph,
+    personalValuesGoalsParagraph,
+    fraternityParagraph,
+    closingParagraph
+  ].join("\n\n");
 }
 
 async function embedPhoto(pdfDoc, page) {
@@ -152,6 +204,11 @@ async function renderPdfPreview() {
 
 Object.values(fields).forEach((field) => {
   field.addEventListener("input", renderPdfPreview);
+  field.addEventListener("change", renderPdfPreview);
+});
+
+positionCheckboxes.forEach((checkbox) => {
+  checkbox.addEventListener("change", renderPdfPreview);
 });
 
 photoInput.addEventListener("change", async () => {

@@ -38,7 +38,7 @@
       <label>Hometown</label>
       <input id="hometown" type="text" value="Hometown, State" />
 
-      <label>Major</label>
+      <label>Major / Field</label>
       <input id="major" type="text" value="Music Education" />
 
       <label>Voice / Instrument</label>
@@ -47,13 +47,38 @@
       <label>Graduation Year</label>
       <input id="graduationYear" type="text" value="2026" />
 
-      <label>Offices / Roles</label>
-      <input id="offices" type="text" value="Chapter President" />
+      <label>Already Graduated?</label>
+      <select id="hasGraduated">
+        <option value="no" selected>No</option>
+        <option value="yes">Yes</option>
+      </select>
+
+      <label>Musical involvement / ensembles</label>
+      <textarea id="musicalInvolvement" placeholder="Choirs, bands, orchestras, productions, studio work, etc."></textarea>
+
+      <label>Fraternity leadership accomplishments</label>
+      <textarea id="leadershipAccomplishments" placeholder="Key chapter projects, mentorship, growth outcomes, etc."></textarea>
+
+      <label>Why they joined Sinfonia</label>
+      <textarea id="whyJoined" placeholder="Motivation for joining and what brotherhood means to them."></textarea>
+
+      <label>Career goals</label>
+      <textarea id="careerGoals" placeholder="Future plans in music, education, performance, or beyond."></textarea>
+
+      <label>Service and community engagement</label>
+      <textarea id="serviceEngagement" placeholder="Campus service, outreach, volunteer work, benefit events, etc."></textarea>
+
+      <label>Leadership Positions</label>
+      <div class="checkbox-grid" id="positionSelections">
+        <label><input type="checkbox" value="president" /> President</label>
+        <label><input type="checkbox" value="vicePresident" /> Vice President</label>
+        <label><input type="checkbox" value="fraternityEducationOfficer" /> Fraternity Education Officer</label>
+        <label><input type="checkbox" value="treasurer" /> Treasurer</label>
+      </div>
 
       <label>Additional Notes</label>
       <textarea id="bioNotes"></textarea>
 
-      
       <label>Profile Photo (JPG or PNG)</label>
       <input id="profilePhoto" type="file" accept="image/png,image/jpeg" />
     </section>
