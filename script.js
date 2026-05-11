@@ -12,66 +12,76 @@ const fields = {
   eventName: document.getElementById("eventName")
 };
 
-const templateChoice = document.getElementById("templateChoice");
+const photoInput = document.getElementById("profilePhoto");
 const bioOutput = document.getElementById("bioOutput");
 const previewName = document.getElementById("previewName");
 const previewEvent = document.getElementById("previewEvent");
-const customText = document.getElementById("customText");
 const statusMessage = document.getElementById("statusMessage");
 
-function lastName(name) {
-  const parts = name.trim().split(" ");
-  return parts[parts.length - 1];
-}
-
-function buildBio() {
-
+function buildSheetText() {
   const d = Object.fromEntries(
-    Object.entries(fields).map(([key, element]) => [key, element.value])
+    Object.entries(fields).map(([key, element]) => [key, element.value.trim()])
   );
 
-  let text = "";
+  const sheet = [
+    `Chapter: ${d.chapter}`,
+    `School: ${d.school}`,
+    `Hometown: ${d.hometown}`,
+    `Major: ${d.major}`,
+    `Voice / Instrument: ${d.voiceOrInstrument}`,
+    `Graduation Year: ${d.graduationYear}`,
+    `Offices / Roles: ${d.offices}`,
+    `Achievements: ${d.achievements}`,
+    `Additional Notes: ${d.bioNotes}`
+  ].join("\n");
 
-  if (templateChoice.value === "formal") {
-    text = `${d.fullName} is a brother of Phi Mu Alpha Sinfonia Fraternity and a member of the ${d.chapter} at ${d.school}. A native of ${d.hometown}, he studies ${d.major} and performs as ${d.voiceOrInstrument}.
-
-Within Sinfonia, ${lastName(d.fullName)} has served as ${d.offices}. His accomplishments include ${d.achievements}. ${d.bioNotes}
-
-${d.fullName} is expected to graduate in ${d.graduationYear} and remains committed to the ideals of brotherhood, musicianship, and service.`;
-  }
-
-  if (templateChoice.value === "concise") {
-    text = `${d.fullName}, a brother of the ${d.chapter} at ${d.school}, is a ${d.major} student from ${d.hometown}. He performs as ${d.voiceOrInstrument} and has served as ${d.offices}. His work includes ${d.achievements}. ${d.bioNotes}`;
-  }
-
-  if (templateChoice.value === "nomination") {
-    text = `${d.fullName} is a dedicated Sinfonian whose work reflects the Fraternity's commitment to music, brotherhood, and service. As a member of the ${d.chapter} at ${d.school}, he has distinguished himself through ${d.achievements}.
-
-A ${d.major} student from ${d.hometown}, ${lastName(d.fullName)} performs as ${d.voiceOrInstrument} and has contributed to the chapter as ${d.offices}. ${d.bioNotes}`;
-  }
-
-  const finalText = customText.value.trim() || text;
-
-  bioOutput.textContent = finalText;
+  bioOutput.textContent = sheet;
   previewName.textContent = d.fullName;
   previewEvent.textContent = d.eventName;
 
-  return finalText;
+  return sheet;
 }
 
 Object.values(fields).forEach((field) => {
-  field.addEventListener("input", buildBio);
+  field.addEventListener("input", buildSheetText);
 });
 
-templateChoice.addEventListener("change", buildBio);
-customText.addEventListener("input", buildBio);
+buildSheetText();
 
-buildBio();
+async function embedPhoto(pdfDoc, page) {
+  const file = photoInput.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  const imageBytes = await file.arrayBuffer();
+  const image = file.type === "image/png"
+    ? await pdfDoc.embedPng(imageBytes)
+    : await pdfDoc.embedJpg(imageBytes);
+
+  const { width, height } = page.getSize();
+
+  const frame = {
+    x: width - 200,
+    y: height - 280,
+    w: 125,
+    h: 160
+  };
+
+  const imgScale = Math.max(frame.w / image.width, frame.h / image.height);
+  const drawW = image.width * imgScale;
+  const drawH = image.height * imgScale;
+
+  page.drawImage(image, {
+    x: frame.x - (drawW - frame.w) / 2,
+    y: frame.y - (drawH - frame.h) / 2,
+    width: drawW,
+    height: drawH
+  });
+}
 
 async function downloadPdf() {
-
   try {
-
     statusMessage.textContent = "Generating PDF...";
 
     const existingPdfBytes = await fetch("template.pdf")
@@ -83,16 +93,13 @@ async function downloadPdf() {
       });
 
     const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-
-    const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
-
+    const firstPage = pdfDoc.getPages()[0];
     const { width, height } = firstPage.getSize();
 
     const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
     const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
 
-    const bioText = buildBio();
+    const sheetText = buildSheetText();
 
     firstPage.drawText(fields.fullName.value, {
       x: 72,
@@ -110,54 +117,37 @@ async function downloadPdf() {
       color: PDFLib.rgb(0.56, 0.09, 0.15)
     });
 
-    firstPage.drawText(bioText, {
+    firstPage.drawText(sheetText, {
       x: 72,
       y: height - 230,
       size: 12,
       lineHeight: 18,
-      maxWidth: width - 144,
+      maxWidth: width - 230,
       font,
       color: PDFLib.rgb(0.07, 0.07, 0.07)
     });
 
+    await embedPhoto(pdfDoc, firstPage);
+
     const pdfBytes = await pdfDoc.save();
-
-    const blob = new Blob([pdfBytes], {
-      type: "application/pdf"
-    });
-
+    const blob = new Blob([pdfBytes], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
-
     link.href = url;
-
-    link.download =
-      `${fields.fullName.value.replace(/\s+/g, "-").toLowerCase()}-bio.pdf`;
+    link.download = `${fields.fullName.value.replace(/\s+/g, "-").toLowerCase()}-bio-sheet.pdf`;
 
     document.body.appendChild(link);
-
     link.click();
-
     document.body.removeChild(link);
-
     URL.revokeObjectURL(url);
 
     statusMessage.textContent = "PDF downloaded successfully.";
-
   } catch (error) {
-
     console.error(error);
-
-    statusMessage.textContent =
-      "Unable to generate PDF. Make sure template.pdf exists in the repository root.";
+    statusMessage.textContent = "Unable to generate PDF. Make sure template.pdf exists in the repository root.";
   }
 }
 
-document
-  .getElementById("downloadButton")
-  .addEventListener("click", downloadPdf);
-
-document
-  .getElementById("resetButton")
-  .addEventListener("click", () => location.reload());
+document.getElementById("downloadButton").addEventListener("click", downloadPdf);
+document.getElementById("resetButton").addEventListener("click", () => location.reload());

@@ -11,7 +11,7 @@
   <header class="site-header">
     <div>
       <p class="eyebrow">Phi Mu Alpha Sinfonia</p>
-      <h1>Biography Generator</h1>
+      <h1>Formal Biography Sheet Builder</h1>
     </div>
 
     <div class="harmony-lockup">
@@ -23,14 +23,7 @@
   <main class="app-shell">
 
     <section class="panel">
-      <h2>Fill in the blanks</h2>
-
-      <label>Biography Style</label>
-      <select id="templateChoice">
-        <option value="formal">Formal Program Bio</option>
-        <option value="concise">Concise Introduction</option>
-        <option value="nomination">Award / Nomination Bio</option>
-      </select>
+      <h2>Fill in the sheet</h2>
 
       <label>Full Name</label>
       <input id="fullName" type="text" value="John Doe" />
@@ -59,11 +52,14 @@
       <label>Achievements</label>
       <textarea id="achievements"></textarea>
 
-      <label>Personal Notes</label>
+      <label>Additional Notes</label>
       <textarea id="bioNotes"></textarea>
 
       <label>Event Name</label>
       <input id="eventName" type="text" value="Recognition Program" />
+
+      <label>Profile Photo (JPG or PNG)</label>
+      <input id="profilePhoto" type="file" accept="image/png,image/jpeg" />
     </section>
 
     <section class="panel">
@@ -74,13 +70,15 @@
       </div>
 
       <div class="preview-card">
-        <p id="previewEvent"></p>
-        <h2 id="previewName"></h2>
-        <div id="bioOutput"></div>
+        <div class="sheet-summary">
+          <p id="previewEvent"></p>
+          <h2 id="previewName"></h2>
+          <div id="bioOutput"></div>
+        </div>
+        <object class="pdf-preview" data="template.pdf" type="application/pdf">
+          <p>PDF preview unavailable in this browser. The file is still used for export.</p>
+        </object>
       </div>
-
-      <label>Custom Final Text</label>
-      <textarea id="customText"></textarea>
 
       <p id="statusMessage"></p>
 
