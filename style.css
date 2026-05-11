@@ -1,72 +1,35 @@
 :root {
-  --sinfonia-black: #111111;
+  --sinfonia-black: #111;
   --sinfonia-red: #8f1725;
   --sinfonia-gold: #9b741f;
   --paper: #f8f4ec;
 }
-
 * { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: #161616; font-family: "Georgia", serif; }
+.site-header { background: var(--sinfonia-black); color: #fff; padding: 1.2rem 2rem; }
+.eyebrow { text-transform: uppercase; letter-spacing: .2em; color: var(--sinfonia-gold); margin: 0; }
+.subtitle { margin: .45rem 0 0; color: #ddd; }
+.app-shell { display: grid; grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr); gap: 1rem; padding: 1rem; }
+.panel { background: #fff; border-radius: 14px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+.grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+label, legend { font-weight: 700; font-size: .95rem; margin-top: .65rem; display: block; }
+input, textarea, select { width: 100%; border: 1px solid #cfcfcf; border-radius: 10px; padding: .6rem .7rem; font-size: .97rem; }
+textarea { min-height: 76px; resize: vertical; }
+fieldset { border: 1px solid #d7d7d7; border-radius: 10px; margin-top: .8rem; padding: .5rem .7rem; }
+fieldset label { display: inline-flex; align-items: center; gap: .35rem; margin-right: .9rem; font-weight: 500; }
+.toolbar { display: flex; gap: .5rem; flex-wrap: wrap; }
+button { border: none; border-radius: 9px; padding: .65rem .9rem; cursor: pointer; }
+#downloadPdfButton { background: var(--sinfonia-red); color: #fff; }
+#downloadDocButton { background: var(--sinfonia-gold); color: #fff; }
+#printButton { background: #314; color: #fff; }
+.live-preview { border: 1px solid #dfdfdf; border-radius: 10px; padding: 1rem; background: #fffefb; line-height: 1.55; min-height: 70vh; }
+.live-preview p { margin: .75rem 0; }
 
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--sinfonia-black);
-  font-family: Georgia, serif;
+@media (max-width: 980px) { .app-shell, .grid-two { grid-template-columns: 1fr; } .live-preview { min-height: 45vh; } }
+
+@media print {
+  .site-header, .form-panel, .toolbar, #statusMessage { display: none !important; }
+  .app-shell { display: block; padding: 0; }
+  .panel { box-shadow: none; border-radius: 0; }
+  .preview-panel { padding: .2in; }
 }
-
-.site-header {
-  background: var(--sinfonia-black);
-  color: white;
-  padding: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-}
-
-.eyebrow { text-transform: uppercase; letter-spacing: 0.3em; color: var(--sinfonia-gold); font-size: 0.8rem; }
-.harmony-lockup { text-align: right; }
-.harmony-lockup span { color: var(--sinfonia-red); }
-.harmony-lockup strong { display: block; font-style: italic; font-size: 2rem; }
-
-.app-shell { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem; }
-.panel { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-
-label { display: block; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: bold; }
-.field-hint { margin: -0.2rem 0 0.6rem; color: #5f5f5f; font-size: 0.88rem; font-style: italic; }
-input, textarea, select {
-  width: 100%;
-  padding: 0.85rem;
-  border-radius: 0.75rem;
-  border: 1px solid #d0d0d0;
-  font-size: 1rem;
-}
-textarea { min-height: 100px; }
-
-.toolbar { display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 1rem; }
-button { border: none; padding: 0.9rem 1.2rem; border-radius: 0.75rem; cursor: pointer; font-weight: bold; }
-#downloadButton { background: var(--sinfonia-red); color: white; }
-#resetButton { background: #ececec; }
-
-.preview-card {
-  border: 2px solid #d9c38d;
-  background: #fffaf0;
-  border-radius: 1rem;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-
-.pdf-preview {
-  width: 100%;
-  height: 560px;
-  border: 1px solid #cbb78c;
-  border-radius: 0.75rem;
-  background: white;
-}
-
-@media (max-width: 900px) { .app-shell { grid-template-columns: 1fr; } }
-
-
-.checkbox-grid { display: grid; grid-template-columns: 1fr; gap: 0.45rem; margin-top: 0.35rem; }
-.checkbox-grid label { display: flex; align-items: center; gap: 0.6rem; font-weight: normal; margin: 0; }
-.checkbox-grid input { width: auto; padding: 0; }

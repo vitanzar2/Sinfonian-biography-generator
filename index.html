@@ -7,104 +7,168 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <header class="site-header">
     <div>
       <p class="eyebrow">Phi Mu Alpha Sinfonia</p>
-      <h1>Formal Biography Sheet Builder</h1>
-    </div>
-
-    <div class="harmony-lockup">
-      <span>among men</span>
-      <strong>harmony</strong>
+      <h1>Biography Generator</h1>
+      <p class="subtitle">Flexible biographical writing for students, alumni, and professionals.</p>
     </div>
   </header>
 
   <main class="app-shell">
+    <section class="panel form-panel" aria-label="Biography form">
+      <h2>Profile & writing options</h2>
 
-    <section class="panel">
-      <h2>Fill in the sheet</h2>
-
-      <label>Full Name</label>
-      <input id="fullName" type="text" value="John Doe" />
-
-      <label>Organization</label>
-      <p class="field-hint">Put your chapter, province, or alumni association here</p>
-      <input id="chapter" type="text" value="Alpha Alpha Chapter" />
-
-      <label>School</label>
-      <input id="school" type="text" value="Example University" />
-
-      <label>Hometown</label>
-      <input id="hometown" type="text" value="Hometown, State" />
-
-      <label>Major / Field</label>
-      <input id="major" type="text" value="Music Education" />
-
-      <label>Voice / Instrument</label>
-      <input id="voiceOrInstrument" type="text" value="Baritone Voice" />
-
-      <label>Graduation Year</label>
-      <input id="graduationYear" type="text" value="2026" />
-
-      <label>Already Graduated?</label>
-      <select id="hasGraduated">
-        <option value="no" selected>No</option>
-        <option value="yes">Yes</option>
-      </select>
-
-      <label>Musical involvement / ensembles</label>
-      <textarea id="musicalInvolvement" placeholder="Choirs, bands, orchestras, productions, studio work, etc."></textarea>
-
-      <label>Fraternity leadership accomplishments</label>
-      <textarea id="leadershipAccomplishments" placeholder="Key chapter projects, mentorship, growth outcomes, etc."></textarea>
-
-      <label>Why they joined Sinfonia</label>
-      <textarea id="whyJoined" placeholder="Motivation for joining and what brotherhood means to them."></textarea>
-
-      <label>Career goals</label>
-      <textarea id="careerGoals" placeholder="Future plans in music, education, performance, or beyond."></textarea>
-
-      <label>Service and community engagement</label>
-      <textarea id="serviceEngagement" placeholder="Campus service, outreach, volunteer work, benefit events, etc."></textarea>
-
-      <label>Leadership Positions</label>
-      <div class="checkbox-grid" id="positionSelections">
-        <label><input type="radio" name="leadershipPosition" value="president" /> President</label>
-        <label><input type="radio" name="leadershipPosition" value="vicePresident" /> Vice President</label>
-        <label><input type="radio" name="leadershipPosition" value="fraternityEducationOfficer" /> Fraternity Education Officer</label>
-        <label><input type="radio" name="leadershipPosition" value="treasurer" /> Treasurer</label>
-        <label><input type="radio" name="leadershipPosition" value="secretary" /> Secretary</label>
+      <div class="grid-two">
+        <div>
+          <label for="fullName">Full Name</label>
+          <input id="fullName" type="text" value="John Doe" />
+        </div>
+        <div>
+          <label for="pronouns">Pronouns</label>
+          <select id="pronouns">
+            <option value="he">He/Him</option>
+            <option value="she">She/Her</option>
+            <option value="they" selected>They/Them</option>
+            <option value="name">Use name only</option>
+          </select>
+        </div>
       </div>
 
-      <label>Additional Notes</label>
-      <textarea id="bioNotes"></textarea>
+      <div class="grid-two">
+        <div>
+          <label for="personType">Profile Type</label>
+          <select id="personType">
+            <option value="undergrad" selected>Undergraduate</option>
+            <option value="graduate">Graduate Student</option>
+            <option value="alumni">Alumnus</option>
+            <option value="professional">Professional</option>
+          </select>
+        </div>
+        <div>
+          <label for="styleMode">Tone / Style</label>
+          <select id="styleMode">
+            <option value="professional" selected>Professional</option>
+            <option value="formal">Formal</option>
+            <option value="ceremonial">Ceremonial</option>
+            <option value="recruitment">Recruitment</option>
+            <option value="alumni">Alumni-Focused</option>
+          </select>
+        </div>
+      </div>
 
-      <label>Profile Photo (JPG or PNG)</label>
+      <div class="grid-two">
+        <div>
+          <label for="lengthMode">Biography Length</label>
+          <select id="lengthMode">
+            <option value="short">Short</option>
+            <option value="standard" selected>Standard</option>
+            <option value="long">Long</option>
+          </select>
+        </div>
+        <div>
+          <label for="outputMode">Output Mode</label>
+          <select id="outputMode">
+            <option value="full" selected>Standard Biography</option>
+            <option value="social">Social / Short-Form</option>
+            <option value="nomination">Award Nomination</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="fullName">Fraternity / Organization</label>
+      <input id="chapter" type="text" value="Alpha Alpha Chapter" />
+
+      <div class="grid-two">
+        <div><label for="school">School / Institution</label><input id="school" type="text" value="Example University" /></div>
+        <div><label for="hometown">Hometown</label><input id="hometown" type="text" value="Hometown, State" /></div>
+      </div>
+
+      <label for="majors">Major(s)</label>
+      <input id="majors" type="text" placeholder="Music Education; Conducting" />
+      <label for="minors">Minor(s)</label>
+      <input id="minors" type="text" placeholder="Arts Administration; Theology" />
+
+      <div class="grid-two">
+        <div><label for="graduationYear">Graduation Year</label><input id="graduationYear" type="text" value="2026" /></div>
+        <div><label for="hasGraduated">Already Graduated?</label><select id="hasGraduated"><option value="no" selected>No</option><option value="yes">Yes</option></select></div>
+      </div>
+
+      <div class="grid-two">
+        <div><label for="instrument">Primary Instrument / Voice</label><input id="instrument" type="text" value="Baritone Voice" /></div>
+        <div><label for="genreFocus">Genre Focus</label><input id="genreFocus" type="text" placeholder="Choral, jazz, sacred music" /></div>
+      </div>
+
+      <div class="grid-two">
+        <div><label for="conductingExperience">Conducting Experience</label><input id="conductingExperience" type="text" placeholder="Ensemble director, assistant conductor" /></div>
+        <div><label for="compositionExperience">Composition / Arranging</label><input id="compositionExperience" type="text" placeholder="Original works, arranging credits" /></div>
+      </div>
+
+      <label for="ensembles">Ensembles & Performance Participation</label>
+      <textarea id="ensembles"></textarea>
+      <label for="communityPerformance">Outreach / Community Performance</label>
+      <textarea id="communityPerformance"></textarea>
+      <label for="serviceEngagement">Service & Community Engagement</label>
+      <textarea id="serviceEngagement"></textarea>
+      <label for="mentorship">Mentorship / Teaching Experience (optional)</label>
+      <textarea id="mentorship"></textarea>
+
+      <label for="leadershipPosition">Fraternity Office</label>
+      <select id="leadershipPosition">
+        <option value="">Select office</option>
+        <option value="president">President</option>
+        <option value="vicePresident">Vice President</option>
+        <option value="fraternityEducationOfficer">Fraternity Education Officer</option>
+        <option value="treasurer">Treasurer</option>
+        <option value="secretary">Secretary</option>
+        <option value="warden">Warden</option>
+      </select>
+
+      <label for="leadershipAccomplishments">Leadership Accomplishments (optional)</label>
+      <textarea id="leadershipAccomplishments"></textarea>
+      <label for="achievements">Achievements & Honors</label>
+      <textarea id="achievements" placeholder="Scholarships, awards, dean's list, recognitions"></textarea>
+      <label for="militaryChurchCommunity">Military Band / Church Music / Community Ensemble (optional)</label>
+      <textarea id="militaryChurchCommunity"></textarea>
+
+      <label for="whyJoined">Why joined Sinfonia (optional)</label>
+      <textarea id="whyJoined"></textarea>
+      <label for="careerGoals">Career goals / future aspirations (optional)</label>
+      <textarea id="careerGoals"></textarea>
+      <label for="values">Personal values / philosophy (optional)</label>
+      <textarea id="values"></textarea>
+      <label for="motto">Fraternity quote or motto (optional)</label>
+      <input id="motto" type="text" />
+
+      <label for="sectionOrder">Section Order (comma-separated keys)</label>
+      <input id="sectionOrder" type="text" value="intro,musical,leadership,service,honors,values,fraternity,future,closing" />
+
+      <fieldset>
+        <legend>Fraternity paragraph versions</legend>
+        <label><input type="checkbox" id="frShort" checked /> Short</label>
+        <label><input type="checkbox" id="frFormal" checked /> Formal</label>
+        <label><input type="checkbox" id="frCeremonial" /> Ceremonial</label>
+        <label><input type="checkbox" id="frRecruitment" /> Recruitment</label>
+      </fieldset>
+
+      <label for="profilePhoto">Headshot / Photo</label>
       <input id="profilePhoto" type="file" accept="image/png,image/jpeg" />
     </section>
 
-    <section class="panel">
-
+    <section class="panel preview-panel" aria-live="polite">
       <div class="toolbar">
         <button id="resetButton">Reset</button>
-        <button id="downloadButton">Download PDF</button>
+        <button id="downloadPdfButton">Export PDF</button>
+        <button id="downloadDocButton">Export Word</button>
+        <button id="printButton">Print</button>
       </div>
-
-      <div class="preview-card">
-        <object class="pdf-preview" data="template.pdf" type="application/pdf">
-          <p>PDF preview unavailable in this browser. The file is still used for export.</p>
-        </object>
-      </div>
-
+      <h2>Live Preview</h2>
+      <article id="livePreview" class="live-preview"></article>
       <p id="statusMessage"></p>
-
     </section>
-
   </main>
 
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
   <script src="script.js"></script>
-
 </body>
 </html>
