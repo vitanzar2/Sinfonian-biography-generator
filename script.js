@@ -84,7 +84,7 @@ async function embedPhoto(pdfDoc, page) {
     ? await pdfDoc.embedPng(imageBytes)
     : await pdfDoc.embedJpg(imageBytes);
 
-  const imgScale = Math.min(PHOTO_FRAME.w / image.width, PHOTO_FRAME.h / image.height);
+  const imgScale = Math.max(PHOTO_FRAME.w / image.width, PHOTO_FRAME.h / image.height);
   const drawW = image.width * imgScale;
   const drawH = image.height * imgScale;
 

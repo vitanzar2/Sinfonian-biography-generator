@@ -82,7 +82,7 @@ button { border: none; padding: 0.9rem 1.2rem; border-radius: 0.75rem; cursor: p
 #photoPreview {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .hidden {
