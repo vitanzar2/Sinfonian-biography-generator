@@ -14,10 +14,6 @@ const fields = {
 const PHOTO_FRAME = { x: 445, y: 600, w: 120, h: 158 };
 
 const photoInput = document.getElementById("profilePhoto");
-const photoPreview = document.getElementById("photoPreview");
-const bioOutput = document.getElementById("bioOutput");
-const previewName = document.getElementById("previewName");
-const previewEvent = document.getElementById("previewEvent");
 const statusMessage = document.getElementById("statusMessage");
 const pdfPreview = document.querySelector(".pdf-preview");
 
@@ -52,25 +48,7 @@ function buildSheetText() {
   const paragraphs = [introParagraph, leadershipParagraph, fraternityParagraph, closingParagraph];
   const body = paragraphs.join("\n\n\n");
 
-  bioOutput.textContent = body;
-  previewName.textContent = d.fullName;
-  previewEvent.textContent = "Sinfonian Biography";
-
   return body;
-}
-
-function updatePhotoPreview() {
-  const file = photoInput.files?.[0];
-  if (!file) {
-    photoPreview.removeAttribute("src");
-    photoPreview.classList.add("hidden");
-    return;
-  }
-
-  const url = URL.createObjectURL(file);
-  photoPreview.src = url;
-  photoPreview.classList.remove("hidden");
-  photoPreview.onload = () => URL.revokeObjectURL(url);
 }
 
 async function embedPhoto(pdfDoc, page) {
@@ -168,7 +146,6 @@ Object.values(fields).forEach((field) => {
 });
 
 photoInput.addEventListener("change", async () => {
-  updatePhotoPreview();
   await renderPdfPreview();
 });
 
