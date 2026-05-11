@@ -80,13 +80,20 @@ function renderPreview() {
 }
 
 async function exportPdf() {
-  const pdfDoc = await PDFLib.PDFDocument.create();
-  const page = pdfDoc.addPage([612, 792]);
+  const templateBytes = await fetch("template.pdf").then(res => {
+    if (!res.ok) throw new Error("Unable to load template.pdf");
+    return res.arrayBuffer();
+  });
+
+  const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+  const page = pdfDoc.getPage(0);
   const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
   const bold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
   const text = buildBio();
+
   page.drawText(fields.fullName.value || "Sinfonian Biography", { x: 50, y: 740, size: 20, font: bold });
   page.drawText(text, { x: 50, y: 700, size: 11, lineHeight: 16, maxWidth: 510, font });
+
   const bytes = await pdfDoc.save();
   downloadBlob(bytes, "application/pdf", "biography.pdf");
 }
