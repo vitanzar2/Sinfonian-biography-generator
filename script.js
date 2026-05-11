@@ -25,16 +25,22 @@ function buildBio() { /* unchanged */
     : `With primary emphasis in ${d.instrument || "their principal instrument"}, ${name} participates in collaborative musical and performance opportunities that support both campus and community engagement.`;
   const sections = {
     intro: `${name} is an ${personLabel} Sinfonian from ${d.hometown || "their hometown"} ${d.school ? `affiliated with ${d.school}` : ""}, where ${name} ${grad}.`,
+    academics: d.majors || d.minors ? `${d.majors ? `${name} studies ${d.majors}` : `${name} pursues focused academic study`}${d.minors ? `, with additional concentration in ${d.minors}` : ""}.` : "",
     musical: `${instrumentPhrase} ${name}'s work reflects continued artistic development, musicianship, and a commitment to excellence through performance and service.`,
+    specialization: d.genreFocus || d.conductingExperience || d.compositionExperience ? `${d.genreFocus ? `Current artistic focus includes ${d.genreFocus}.` : ""} ${d.conductingExperience ? `Conducting experience includes ${d.conductingExperience}.` : ""} ${d.compositionExperience ? `Composition and arranging work includes ${d.compositionExperience}.` : ""}` : "",
+    ensembles: d.ensembles ? `Ensemble and performance participation includes ${d.ensembles}.` : "",
     leadership: `As a member of the ${d.chapter || "local chapter"} of Phi Mu Alpha Sinfonia Fraternity of America, ${name} contributes to chapter leadership, brotherhood initiatives, and programs that promote scholarship, service, and the advancement of music within the collegiate community.`,
+    office: d.leadershipPosition || d.leadershipAccomplishments ? `${d.leadershipPosition ? `${name} serves as ${d.leadershipPosition.replace(/([A-Z])/g, " $1").toLowerCase()}, and ${ROLE_DESCRIPTIONS[d.leadershipPosition] || "supports chapter progress through accountable leadership"}.` : ""} ${d.leadershipAccomplishments ? `Key leadership accomplishments include ${d.leadershipAccomplishments}.` : ""}` : "",
     service: d.serviceEngagement || d.communityPerformance ? `Service and community engagement includes ${d.serviceEngagement || "ongoing volunteer and chapter-supported initiatives"}. ${d.communityPerformance ? `Outreach performance work includes ${d.communityPerformance}.` : ""}` : "",
+    mentorship: d.mentorship ? `Mentorship and teaching experience includes ${d.mentorship}.` : "",
+    community: d.militaryChurchCommunity ? `Additional musical service includes ${d.militaryChurchCommunity}.` : "",
     honors: `${d.achievements ? `${name} has earned recognition including ${d.achievements}.` : ""}`,
     values: `${d.whyJoined ? `${name} joined Sinfonia because ${d.whyJoined}.` : ""} ${d.values ? `Guiding values include ${d.values}.` : ""} ${d.motto ? `Personal motto: “${d.motto}.”` : ""}`,
     fraternity: buildFraternityParagraph(d),
     future: `${d.careerGoals ? `Future aspirations include ${d.careerGoals}.` : `Through leadership, musicianship, scholarship, and service, ${name} continues to uphold the ideals of Phi Mu Alpha Sinfonia while pursuing personal and professional growth through music.`}`,
     closing: d.outputMode === "nomination" ? `${name} is respectfully recommended for award consideration based on sustained excellence and exemplary character.` : ""
   };
-  const order = (d.sectionOrder || "intro,musical,leadership,service,honors,values,fraternity,future,closing").split(",").map(s => clean(s));
+  const order = (d.sectionOrder || "intro,academics,musical,specialization,ensembles,leadership,office,service,mentorship,community,honors,values,fraternity,future,closing").split(",").map(s => clean(s));
   let picked = order.map(k => sections[k]).filter(Boolean);
   if (d.lengthMode === "short") picked = picked.slice(0, 4);
   if (d.outputMode === "social") {
