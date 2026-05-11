@@ -22,10 +22,13 @@ button { border: none; border-radius: 9px; padding: .65rem .9rem; cursor: pointe
 #downloadPdfButton { background: var(--sinfonia-red); color: #fff; }
 #downloadDocButton { background: var(--sinfonia-gold); color: #fff; }
 #printButton { background: #314; color: #fff; }
-.live-preview { border: 1px solid #dfdfdf; border-radius: 10px; padding: 1rem; background: #fffefb; line-height: 1.55; min-height: 70vh; }
+
+.pdf-preview-shell { border: 1px solid #dfdfdf; border-radius: 10px; overflow: hidden; background: #f4f4f4; margin-bottom: .75rem; }
+.pdf-preview { width: 100%; height: 70vh; border: 0; background: white; }
+.live-preview { border: 1px solid #dfdfdf; border-radius: 10px; padding: 1rem; background: #fffefb; line-height: 1.55; min-height: 18vh; max-height: 25vh; overflow:auto; }
 .live-preview p { margin: .75rem 0; }
 
-@media (max-width: 980px) { .app-shell, .grid-two { grid-template-columns: 1fr; } .live-preview { min-height: 45vh; } }
+@media (max-width: 980px) { .app-shell, .grid-two { grid-template-columns: 1fr; } .pdf-preview { height: 55vh; } .live-preview { min-height: 30vh; max-height: 40vh; } }
 
 @media print {
   .site-header, .form-panel, .toolbar, #statusMessage { display: none !important; }
