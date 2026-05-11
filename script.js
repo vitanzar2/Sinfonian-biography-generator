@@ -19,14 +19,16 @@ const POSITION_DESCRIPTIONS = {
   president: "provides leadership for chapter operations and strategic planning",
   vicePresident: "assists in chapter administration and member development",
   fraternityEducationOfficer: "supports the development and education of new members",
-  treasurer: "oversees chapter finances and budgeting"
+  treasurer: "oversees chapter finances and budgeting",
+  secretary: "maintains chapter records, communications, and organizational continuity"
 };
 
 const POSITION_LABELS = {
   president: "President",
   vicePresident: "Vice President",
   fraternityEducationOfficer: "Fraternity Education Officer",
-  treasurer: "Treasurer"
+  treasurer: "Treasurer",
+  secretary: "Secretary"
 };
 
 const PHOTO_FRAME = { x: 445, y: 600, w: 120, h: 158 };
@@ -34,7 +36,7 @@ const PHOTO_FRAME = { x: 445, y: 600, w: 120, h: 158 };
 const photoInput = document.getElementById("profilePhoto");
 const statusMessage = document.getElementById("statusMessage");
 const pdfPreview = document.querySelector(".pdf-preview");
-const positionCheckboxes = [...document.querySelectorAll("#positionSelections input[type='checkbox']")];
+const positionOptions = [...document.querySelectorAll("#positionSelections input[name='leadershipPosition']")];
 
 let previewPdfUrl;
 
@@ -58,21 +60,17 @@ function buildGraduationClause(graduationYear, hasGraduated) {
 }
 
 function buildLeadershipRoleSentence(name, chapter) {
-  const selectedPositions = positionCheckboxes
-    .filter((checkbox) => checkbox.checked)
-    .map((checkbox) => checkbox.value);
+  const selectedPosition = positionOptions.find((option) => option.checked)?.value;
 
-  if (!selectedPositions.length) {
+  if (!selectedPosition) {
     return `${name} is active in collaborative and service-focused efforts, supporting others through leadership, musicianship, and community engagement.`;
   }
 
   const chapterClause = chapter ? ` within ${chapter}` : "";
-  const rolesList = selectedPositions.map((position) => POSITION_LABELS[position]).join(", ");
-  const roleDetails = selectedPositions
-    .map((position) => `${POSITION_LABELS[position]}: ${POSITION_DESCRIPTIONS[position]}`)
-    .join("; ");
+  const roleLabel = POSITION_LABELS[selectedPosition];
+  const roleDetail = POSITION_DESCRIPTIONS[selectedPosition];
 
-  return `${name} serves as ${rolesList}${chapterClause}. In these roles, ${name} ${roleDetails}.`;
+  return `${name} serves as ${roleLabel}${chapterClause}. In this role, ${name} ${roleDetail}.`;
 }
 
 function buildSheetText() {
@@ -207,8 +205,8 @@ Object.values(fields).forEach((field) => {
   field.addEventListener("change", renderPdfPreview);
 });
 
-positionCheckboxes.forEach((checkbox) => {
-  checkbox.addEventListener("change", renderPdfPreview);
+positionOptions.forEach((option) => {
+  option.addEventListener("change", renderPdfPreview);
 });
 
 photoInput.addEventListener("change", async () => {
