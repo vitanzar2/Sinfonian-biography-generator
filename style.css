@@ -55,10 +55,6 @@ button { border: none; padding: 0.9rem 1.2rem; border-radius: 0.75rem; cursor: p
   margin-bottom: 1rem;
 }
 
-.sheet-summary { margin-bottom: 1rem; }
-.sheet-summary h2 { font-size: 2rem; margin-top: 0.5rem; }
-#previewEvent { text-transform: uppercase; letter-spacing: 0.25em; color: var(--sinfonia-red); font-size: 0.8rem; }
-#bioOutput { white-space: pre-wrap; line-height: 1.6; }
 
 .pdf-preview {
   width: 100%;
@@ -70,22 +66,3 @@ button { border: none; padding: 0.9rem 1.2rem; border-radius: 0.75rem; cursor: p
 
 @media (max-width: 900px) { .app-shell { grid-template-columns: 1fr; } }
 
-.preview-photo-frame {
-  width: 180px;
-  height: 220px;
-  border: 2px solid var(--sinfonia-red);
-  border-radius: 0.75rem;
-  margin-bottom: 1rem;
-  overflow: hidden;
-  background: #fff;
-}
-
-#photoPreview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hidden {
-  display: none;
-}
